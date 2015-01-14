@@ -1,2 +1,21 @@
 = Kubernetes Java Sample
 
+== Start MySQL
+
+[source,text]
+----
+cluster/kubectl.sh create -f examples/guestbook/mysql.json
+----
+
+== Publish as Service?
+
+How?
+
+How will WildFly otherwise auto discover the IP address of MySQL?
+
+== Start WildFly
+
+[source,text]
+----
+cluster/kubectl.sh create -f examples/guestbook/wildfly.json
+----
