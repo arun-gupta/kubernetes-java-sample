@@ -4,7 +4,7 @@
 
 [source,text]
 ----
-cluster/kubectl.sh create -f examples/guestbook/mysql.json
+cluster/kubectl.sh create -f mysql.json
 ----
 
 == Publish as Service?
@@ -17,5 +17,5 @@ How will WildFly otherwise auto discover the IP address of MySQL?
 
 [source,text]
 ----
-cluster/kubectl.sh create -f examples/guestbook/wildfly.json
+cluster/kubectl.sh create -f wildfly.json
 ----
