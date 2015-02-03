@@ -4,29 +4,20 @@
 
 https://github.com/GoogleCloudPlatform/kubernetes/blob/master/docs/getting-started-guides/vagrant.md
 
-SSH to master:
+== Create Kubernetes cluster
 
-[source,text]
+[source, text]
 ----
-vagrant ssh master
-----
-
-== Start MySQL
-
-[source,text]
-----
-kubectl.sh create -f mysql.json
+./cluster/kube-up.sh create -f ../kubernetes-java-sample/javaee7-hol.json
 ----
 
-== Publish as Service?
+== Access the Java EE 7 application
 
-How?
+Get the IP address using `kube-up get pods` and access the application at http://<IP-ADDRESS>:8080/movieplex7
 
-How will WildFly otherwise auto discover the IP address of MySQL?
+== TODO
 
-== Start WildFly
-
-[source,text]
-----
-kubectl.sh create -f wildfly.json
-----
+. Start MySQL
+. Publish MySQL Service
+. Start WildFly
+. Access the application
