@@ -1,5 +1,7 @@
 = Kubernetes Java Sample
 
+Complete details: http://blog.arungupta.me/javaee7-wildfly-kubernetes-mac-vagrant/
+
 == Start Kubernetes using Vagrant
 
 https://github.com/GoogleCloudPlatform/kubernetes/blob/master/docs/getting-started-guides/vagrant.md
