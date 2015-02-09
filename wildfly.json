@@ -8,7 +8,7 @@
       "id": "wildfly",
       "containers": [{
         "name": "wildfly",
-        "image": "arungupta/wildfly-mysql-javaee7:h2",
+        "image": "arungupta/wildfly-mysql-javaee7:knetes",
         "cpu": 100,
         "ports": [{
           "containerPort": 8080,
