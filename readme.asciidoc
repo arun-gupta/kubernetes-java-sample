@@ -4,8 +4,16 @@
 
 . Start Kubernetes using Vagrant
 +
-https://github.com/GoogleCloudPlatform/kubernetes/blob/master/docs/getting-started-guides/vagrant.md
+[source, text]
+----
+cd kubernetes
 
+export KUBERNETES_PROVIDER=vagrant
+cluster/kube-up.sh
+----
+
+Detailed instructions:
+https://github.com/GoogleCloudPlatform/kubernetes/blob/master/docs/getting-started-guides/vagrant.md
 
 === Java EE 7 application using one Container
 
