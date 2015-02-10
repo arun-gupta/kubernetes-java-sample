@@ -1,25 +1,61 @@
 = Kubernetes Java Sample
 
-Complete details: http://blog.arungupta.me/javaee7-wildfly-kubernetes-mac-vagrant/
+=== Initial setup
 
-== Start Kubernetes using Vagrant
-
+. Start Kubernetes using Vagrant
++
 https://github.com/GoogleCloudPlatform/kubernetes/blob/master/docs/getting-started-guides/vagrant.md
 
-== Create Kubernetes cluster
 
+=== Java EE 7 application using one Container
+
+. Create Kubernetes cluster
++
 [source, text]
 ----
-./cluster/kube-up.sh create -f ../kubernetes-java-sample/javaee7-hol.json
+./cluster/kubectl.sh create -f ../kubernetes-java-sample/javaee7-hol.json
 ----
++
+. Get the host IP address
++
+[source, text]
+----
+./cluster/kubectl.sh get pods | grep javaee7-hol | awk '{ print $5 }'
+----
++
+Access the application at http://<IP-ADDRESS>:8080/movieplex7
 
-== Access the Java EE 7 application
+Complete details: http://blog.arungupta.me/javaee7-wildfly-kubernetes-mac-vagrant/
 
-Get the IP address using `kube-up get pods` and access the application at http://<IP-ADDRESS>:8080/movieplex7
 
-== TODO
+=== Java EE 7 application using two Containers (WildFly and MySQL) and a Service (MySQL)
 
 . Start MySQL
++
+[source, text]
+----
+./cluster/kubectl.sh create -f ../kubernetes-java-sample/mysql.json
+----
++
 . Publish MySQL Service
++
+[source, text]
+----
+./cluster/kubectl.sh create -f ../kubernetes-java-sample/mysql-service.json
+----
++
 . Start WildFly
-. Access the application
++
+[source, text]
+----
+./cluster/kubectl.sh create -f ../kubernetes-java-sample/wildfly.json
+----
++
+. Get the WildFly host IP address
++
+[source, text]
+----
+./cluster/kubectl.sh get pods | grep wildfly | awk '{ print $5 }'
+----
++
+Access the application at http://<IP-ADDRESS>:8080/movieplex7
