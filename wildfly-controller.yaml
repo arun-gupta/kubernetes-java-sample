@@ -1,0 +1,22 @@
+id: wildfly-controller
+kind: ReplicationController
+apiVersion: v1beta1
+desiredState:
+  replicas: 2
+  replicaSelector:
+    name: wildfly
+  podTemplate:
+    desiredState:
+      manifest:
+        version: v1beta1
+        id: wildfly
+        containers:
+          - name: wildfly
+            image: arungupta/wildfly-mysql-javaee7:knetes
+            ports:
+              - containerPort: 8080
+                hostPort: 8080
+              - containerPort: 9090
+                hostPort: 9090
+    labels:
+      name: wildfly
