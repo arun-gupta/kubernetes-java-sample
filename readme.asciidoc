@@ -66,4 +66,4 @@ Complete details: http://blog.arungupta.me/javaee7-wildfly-kubernetes-mac-vagran
 ./cluster/kubectl.sh get pods | grep wildfly | awk '{ print $5 }'
 ----
 +
-Access the application at http://<IP-ADDRESS>:8080/movieplex7
+Access the application at http://<IP-ADDRESS>:8080/employees/resources/employees
