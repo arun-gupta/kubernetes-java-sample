@@ -11,7 +11,7 @@ desiredState:
         version: v1beta1
         id: wildfly
         containers:
-          - name: wildfly
-            image: arungupta/wildfly-mysql-javaee7:knetes
+          - name: javaee7-hol
+            image: arungupta/javaee7-hol
     labels:
       name: wildfly
