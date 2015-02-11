@@ -13,10 +13,5 @@ desiredState:
         containers:
           - name: wildfly
             image: arungupta/wildfly-mysql-javaee7:knetes
-            ports:
-              - containerPort: 8080
-                hostPort: 8080
-              - containerPort: 9090
-                hostPort: 9090
     labels:
       name: wildfly
