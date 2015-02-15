@@ -1,5 +1,7 @@
 = Kubernetes Java Sample
 
+This project shows different recipes to run a Java EE 7 application using Kubernetes.
+
 === Initial setup
 
 . Start Kubernetes using Vagrant
@@ -15,7 +17,7 @@ cluster/kube-up.sh
 Detailed instructions:
 https://github.com/GoogleCloudPlatform/kubernetes/blob/master/docs/getting-started-guides/vagrant.md
 
-=== Java EE 7 application using one Container
+=== One Container with in-memory database
 
 . Create Kubernetes cluster
 +
@@ -36,7 +38,7 @@ Access the application at http://<IP-ADDRESS>:8080/movieplex7
 Complete details: http://blog.arungupta.me/javaee7-wildfly-kubernetes-mac-vagrant/
 
 
-=== Java EE 7 application using two Containers (WildFly and MySQL) and a Service (MySQL)
+=== Two Containers (WildFly and MySQL) and a Service (MySQL)
 
 . Start MySQL
 +
@@ -67,3 +69,5 @@ Complete details: http://blog.arungupta.me/javaee7-wildfly-kubernetes-mac-vagran
 ----
 +
 Access the application at http://<IP-ADDRESS>:8080/employees/resources/employees
+
+=== Two Containers (WildFly and MySQL), Replication Controller (WildFly), and a Service (MySQL)
