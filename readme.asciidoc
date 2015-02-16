@@ -72,7 +72,7 @@ Complete details: http://blog.arungupta.me/mysql-kubernetes-service-access-wildf
 +
 Access the application at http://<IP-ADDRESS>:8080/employees/resources/employees
 
-=== Two Containers (WildFly and MySQL), Replication Controller, and a Service
+=== Two Containers, Replication Controller, and a Service (using OpenShift)
 
 Complete details: http://blog.arungupta.me/openshift-v3-getting-started-javaee7-wildfly-mysql/
 
