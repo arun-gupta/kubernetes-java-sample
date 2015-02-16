@@ -40,6 +40,8 @@ Complete details: http://blog.arungupta.me/javaee7-wildfly-kubernetes-mac-vagran
 
 === Two Containers (WildFly and MySQL) and a Service (MySQL)
 
+Complete details: http://blog.arungupta.me/mysql-kubernetes-service-access-wildfly-pod-techtip72/
+
 . Start MySQL
 +
 [source, text]
@@ -70,4 +72,8 @@ Complete details: http://blog.arungupta.me/javaee7-wildfly-kubernetes-mac-vagran
 +
 Access the application at http://<IP-ADDRESS>:8080/employees/resources/employees
 
-=== Two Containers (WildFly and MySQL), Replication Controller (WildFly), and a Service (MySQL)
+=== Two Containers (WildFly and MySQL), Replication Controller, and a Service
+
+Complete details: http://blog.arungupta.me/openshift-v3-getting-started-javaee7-wildfly-mysql/
+
+
