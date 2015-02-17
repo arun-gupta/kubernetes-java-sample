@@ -2,7 +2,7 @@
 
 This project shows different recipes to run a Java EE 7 application using Kubernetes.
 
-=== Initial setup
+== Initial setup
 
 . Start Kubernetes using Vagrant
 +
@@ -17,7 +17,7 @@ cluster/kube-up.sh
 Detailed instructions:
 https://github.com/GoogleCloudPlatform/kubernetes/blob/master/docs/getting-started-guides/vagrant.md
 
-=== One Container with in-memory database
+== One Pod with one Container and in-memory database
 
 . Create Kubernetes cluster
 +
@@ -37,8 +37,7 @@ Access the application at http://<IP-ADDRESS>:8080/movieplex7
 
 Complete details: http://blog.arungupta.me/javaee7-wildfly-kubernetes-mac-vagrant/
 
-
-=== Two Containers (WildFly and MySQL) and a Service (MySQL)
+== Two Pods with a Container each (WildFly and MySQL) and a Service (MySQL)
 
 Complete details: http://blog.arungupta.me/mysql-kubernetes-service-access-wildfly-pod-techtip72/
 
@@ -72,8 +71,14 @@ Complete details: http://blog.arungupta.me/mysql-kubernetes-service-access-wildf
 +
 Access the application at http://<IP-ADDRESS>:8080/employees/resources/employees
 
-=== Two Containers, Replication Controller, and a Service (using OpenShift)
+== OpenShift
+
+=== Two Pods with a Container each, Wrapped in a Replication Controller, front-ended by a Service
 
 Complete details: http://blog.arungupta.me/openshift-v3-getting-started-javaee7-wildfly-mysql/
+
+=== Router front-ending the ``frontend'' Service
+
+TBD
 
 
