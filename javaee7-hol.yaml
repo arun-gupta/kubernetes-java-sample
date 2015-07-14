@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: javaee7-hol
+  labels:
+    name: javaee7-hol
+spec:
+  replicas: 1
+  selector:
+    name: javaee7-hol
+  template:
+    metadata:
+      labels:
+        name: javaee7-hol
+    spec:
+      containers:
+      - name: master
+        image: arungupta/javaee7-hol
+        ports:
+        - containerPort: 8080
+          hostPort: 8080
