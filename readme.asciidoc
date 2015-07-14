@@ -145,7 +145,7 @@ And check that WildFly container running inside the Pod is accessible:
 
 == A Replication Controller with Two Replicas of a Pod (WildFly)
 
-This section will explain how to start a Replication Control with two replicas of a Pod. Each Pod will have one WildFly container.
+This section will explain how to start a Replication Controller with two replicas of a Pod. Each Pod will have one WildFly container.
 
 . Start a Replication Controller that has two replicas of a pod, each with a WildFly container:
 +
@@ -182,7 +182,7 @@ CONTROLLER   CONTAINER(S)     IMAGE(S)        SELECTOR       REPLICAS
 wildfly-rc   wildfly-rc-pod   jboss/wildfly   name=wildfly   2
 ----
 +
-If mulitple Replication Controllers are running then you can query for this specific one using the label:
+If multiple Replication Controllers are running then you can query for this specific one using the label:
 +
 [source, text]
 ----
@@ -213,7 +213,7 @@ Find IP address of the other Pod:
 +
 [source, text]
 ----
-./cluster/kubectl.sh get -o template po wildfly-rc-d5fbs --template={{.status.podIP}} --api-ve
+./cluster/kubectl.sh get -o template po wildfly-rc-d5fbs --template={{.status.podIP}}
 10.246.1.19
 ----
 +
@@ -242,7 +242,6 @@ Last login: Tue Jul 14 21:35:12 2015 from 10.0.2.2
 </div>
 </body>
 </html>
-
 ----
 
 === Automatic Restart of Pods
