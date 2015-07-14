@@ -1,16 +1,18 @@
 apiVersion: v1
 kind: ReplicationController
 metadata:
-  name: my-wildfly
+  name: wildfly-rc
+  labels:
+    name: wildfly
 spec:
   replicas: 2
   template:
     metadata:
       labels:
-        app: wildfly
+        name: wildfly
     spec:
       containers:
-      - name: wildfly
+      - name: wildfly-rc-pod
         image: jboss/wildfly
         ports:
         - containerPort: 8080
