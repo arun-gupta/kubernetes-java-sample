@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: wildfly-plain
+  labels:
+    name: wildfly
+    context: test
+spec:
+  containers:
+    - name: wildfly
+      image: jboss/wildfly
+      ports:
+        - containerPort: 8080
+          hostPort: 8080
