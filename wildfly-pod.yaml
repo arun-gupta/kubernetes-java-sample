@@ -1,14 +1,13 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: wildfly-plain
-  labels:
+  name: wildfly
+  labels: 
     name: wildfly
-    context: test
-spec:
-  containers:
-    - name: wildfly
-      image: jboss/wildfly
-      ports:
+spec: 
+  containers: 
+    - image: arungupta/wildfly-mysql-javaee7:knetes
+      name: wildfly
+      ports: 
         - containerPort: 8080
           hostPort: 8080

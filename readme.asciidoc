@@ -16,13 +16,13 @@ This project shows different recipes to run a Java EE 7 application using Kubern
 Detailed instructions:
 https://github.com/GoogleCloudPlatform/kubernetes/blob/master/docs/getting-started-guides/vagrant.md
 
-== WildFly
+== A Pod with one Container (WildFly)
 
-. Start WildFly pod
+. Start a Pod with WildFly container:
 
   kubectl.sh create -f ~/workspaces/kubernetes-java-sample/wildfly-pod.yaml
 
-. Get the status of Pod:
+. Get status of the Pod:
 +
 [source, text]
 ----
@@ -36,7 +36,7 @@ wildfly-plain   1/1       Running   0         10s
 +
 NOTE: Make sure to wait for the status to change to Running.
 +
-. Find IP address of the pod as:
+. Find IP address of the pod:
 +
 [source, text]
 ----
@@ -47,7 +47,85 @@ wildfly-plain   1/1       Running   0          18s       10.245.1.3
 +
 . Access the main page of WildFly at http://10.245.1.3:8080/
 +
-. Check the logs of the Pod as:
+. Check logs of the Pod:
++
+[source, text]
+----
+kubernetes> ./cluster/kubectl.sh logs wildfly-plain
+----
++
+. More details about the Pod can be obtained:
++
+[source, text]
+----
+./cluster/kubectl.sh describe pod wildfly-plain
+
+TODO: ADD OUTPUT
+----
++
+. Delete the Pod:
+
+  kubectl.sh create -f ~/workspaces/kubernetes-java-sample/wildfly-pod.yaml
+
+== A Replication Controller with two replicas of a Pod (WildFly)
+
+. Start a Replication Controller that has two replicas of a pod, each with a WildFly container:
+
+  kubectl.sh create -f ~/workspaces/kubernetes-java-sample/wildfly-rc.yaml
+
+. Get status of the Pods:
++
+[source, text]
+----
+kubernetes> ./cluster/kubectl.sh get -w po
+NAME               READY     STATUS    RESTARTS   AGE
+my-wildfly-b1fb8   0/1       Pending   0          3s
+my-wildfly-bmf6k   0/1       Pending   0          3s
+NAME               READY     STATUS    RESTARTS   AGE
+my-wildfly-b1fb8   0/1       Running   0          3s
+my-wildfly-bmf6k   0/1       Running   0         3s
+my-wildfly-b1fb8   1/1       Running   0         3s
+my-wildfly-bmf6k   1/1       Running   0         11s
+----
++
+NOTE: Make sure to wait for the status to change to Running.
++
+. Get status of the Replication Controller:
++
+[source, text]
+----
+kubernetes> ./cluster/kubectl.sh get rc
+CONTROLLER   CONTAINER(S)   IMAGE(S)        SELECTOR      REPLICAS
+my-wildfly   wildfly        jboss/wildfly   app=wildfly   2
+----
++
+If mulitple Replication Controllers are running then you can query for this specific one using the label:
++
+[source, text]
+----
+kubernetes> ./cluster/kubectl.sh get rc -l app=wildfly
+CONTROLLER   CONTAINER(S)   IMAGE(S)        SELECTOR      REPLICAS
+my-wildfly   wildfly        jboss/wildfly   app=wildfly   2
+----
++
+. Find IP address of the pod:
++
+[source, text]
+----
+kubernetes> ./cluster/kubectl.sh get -o=wide po
+NAME            READY     STATUS    RESTARTS   AGE       NODE
+wildfly-plain   1/1       Running   0          18s       10.245.1.3
+----
++
+. Find ports used by each Pod:
++
+[source, text]
+----
+----
++
+. Access the main page of WildFly at http://10.245.1.3:8080/
++
+. Check logs of the Pod:
 +
 [source, text]
 ----
@@ -58,8 +136,7 @@ kubernetes> ./cluster/kubectl.sh logs wildfly-plain
 
   kubectl.sh create -f ~/workspaces/kubernetes-java-sample/wildfly-pod.yaml
 
-
-== One Pod with one Container and in-memory database (using WildFly + H2)
+== A Pod with one Container (Application Server and In-memory database, using WildFly + H2)
 
 . Create Java EE 7 sample application Replication Controller:
 +
@@ -142,7 +219,7 @@ replicationcontrollers/javaee7-hol
 +
 [source, text]
 ----
-./cluster/kubectl.sh create -f ../kubernetes-java-sample/mysql.yaml
+./cluster/kubectl.sh create -f ~/workspaces/kubernetes-java-sample/mysql.yaml
 ----
 +
 . Publish MySQL Service
