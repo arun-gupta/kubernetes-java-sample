@@ -20,47 +20,114 @@ https://github.com/GoogleCloudPlatform/kubernetes/blob/master/docs/getting-start
 
 . Start a Pod with WildFly container:
 
-  kubectl.sh create -f ~/workspaces/kubernetes-java-sample/wildfly-pod.yaml
+  ./cluster/kubectl.sh create -f ~/workspaces/kubernetes-java-sample/wildfly-pod.yaml
 
 . Get status of the Pod:
 +
 [source, text]
 ----
 kubernetes> ./cluster/kubectl.sh get -w po
-NAME            READY     STATUS    RESTARTS   AGE
-wildfly-plain   0/1       Pending   0          4s
-NAME            READY     STATUS    RESTARTS   AGE
-wildfly-plain   0/1       Running   0          5s
-wildfly-plain   1/1       Running   0         10s
+NAME          READY     STATUS    RESTARTS   AGE
+wildfly-pod   0/1       Pending   0          4s
+wildfly-pod   0/1       Running   0          10s
+NAME          READY     STATUS    RESTARTS   AGE
+wildfly-pod   1/1       Running   0          10s
 ----
 +
 NOTE: Make sure to wait for the status to change to Running.
 +
-. Find IP address of the pod:
+. Get complete details about the generated Pod (including IP address):
 +
 [source, text]
 ----
-kubernetes> ./cluster/kubectl.sh get -o=wide po
-NAME            READY     STATUS    RESTARTS   AGE       NODE
-wildfly-plain   1/1       Running   0          18s       10.245.1.3
+./cluster/kubectl.sh describe po wildfly-pod
+Name:				wildfly-pod
+Namespace:			default
+Image(s):			jboss/wildfly
+Node:				10.245.1.3/10.245.1.3
+Labels:				name=wildfly
+Status:				Running
+Reason:				
+Message:			
+IP:				10.246.1.15
+Replication Controllers:	<none>
+Containers:
+  wildfly-pod:
+    Image:	jboss/wildfly
+    Limits:
+      cpu:		100m
+    State:		Running
+      Started:		Tue, 14 Jul 2015 14:32:06 -0700
+    Ready:		True
+    Restart Count:	0
+Conditions:
+  Type		Status
+  Ready 	True 
+Events:
+  FirstSeen				LastSeen			Count	From			SubobjectPath		Reason		Message
+  Tue, 14 Jul 2015 14:32:04 -0700	Tue, 14 Jul 2015 14:32:04 -0700	1	{scheduler }					scheduled	Successfully assigned wildfly-pod to 10.245.1.3
+  Tue, 14 Jul 2015 14:32:04 -0700	Tue, 14 Jul 2015 14:32:04 -0700	1	{kubelet 10.245.1.3}	implicitly required container POD	pulled		Pod container image "gcr.io/google_containers/pause:0.8.0" already present on machine
+  Tue, 14 Jul 2015 14:32:05 -0700	Tue, 14 Jul 2015 14:32:05 -0700	1	{kubelet 10.245.1.3}	implicitly required container POD	created		Created with docker id 39722cdb6e81
+  Tue, 14 Jul 2015 14:32:05 -0700	Tue, 14 Jul 2015 14:32:05 -0700	1	{kubelet 10.245.1.3}	implicitly required container POD	started		Started with docker id 39722cdb6e81
+  Tue, 14 Jul 2015 14:32:06 -0700	Tue, 14 Jul 2015 14:32:06 -0700	1	{kubelet 10.245.1.3}	spec.containers{wildfly-pod}		created		Created with docker id dd410c76c15a
+  Tue, 14 Jul 2015 14:32:06 -0700	Tue, 14 Jul 2015 14:32:06 -0700	1	{kubelet 10.245.1.3}	spec.containers{wildfly-pod}		started		Started with docker id dd410c76c15a
 ----
 +
-. Access the main page of WildFly at http://10.245.1.3:8080/
+NOTE: IP address of the Pod is shown as 10.246.1.15.
 +
 . Check logs of the Pod:
 +
 [source, text]
 ----
-kubernetes> ./cluster/kubectl.sh logs wildfly-plain
+./cluster/kubectl.sh logs wildfly-pod
+=========================================================================
+
+  JBoss Bootstrap Environment
+
+  JBOSS_HOME: /opt/jboss/wildfly
+
+  JAVA: /usr/lib/jvm/java/bin/java
+
+  JAVA_OPTS:  -server -XX:+UseCompressedOops  -server -XX:+UseCompressedOops -Xms64m -Xmx512m -XX:MaxPermSize=256m -Djava.net.preferIPv4Stack=true -Djboss.modules.system.pkgs=org.jboss.byteman -Djava.awt.headless=true
+
+=========================================================================
+
+OpenJDK 64-Bit Server VM warning: ignoring option MaxPermSize=256m; support was removed in 8.0
+21:32:07,636 INFO  [org.jboss.modules] (main) JBoss Modules version 1.4.3.Final
+21:32:07,944 INFO  [org.jboss.msc] (main) JBoss MSC version 1.2.6.Final
+21:32:08,045 INFO  [org.jboss.as] (MSC service thread 1-7) WFLYSRV0049: WildFly Full 9.0.0.Final (WildFly Core 1.0.0.Final) starting
+
+. . .
+
+21:32:10,548 INFO  [org.jboss.as] (Controller Boot Thread) WFLYSRV0060: Http management interface listening on http://127.0.0.1:9990/management
+21:32:10,548 INFO  [org.jboss.as] (Controller Boot Thread) WFLYSRV0051: Admin console listening on http://127.0.0.1:9990
+21:32:10,549 INFO  [org.jboss.as] (Controller Boot Thread) WFLYSRV0025: WildFly Full 9.0.0.Final (WildFly Core 1.0.0.Final) started in 3386ms - Started 203 of 379 services (210 services are lazy, passive or on-demand)
 ----
-+
-. More details about the Pod can be obtained:
+. Pod's IP is accessible only inside the cluster. To access the WildFly server running in the Pod, login to the minion:
 +
 [source, text]
 ----
-./cluster/kubectl.sh describe pod wildfly-plain
+kubernetes> vagrant ssh minion-1
+Last login: Tue Jul 14 21:29:24 2015 from 10.0.2.2
+[vagrant@kubernetes-minion-1 ~]$ 
+----
++
+And check that WildFly container running inside the Pod is accessible:
++
+[source, text]
+----
+[vagrant@kubernetes-minion-1 ~]$ curl http://10.246.1.15:8080
+<!--
+  ~ JBoss, Home of Professional Open Source.
+  ~ Copyright (c) 2014, Red Hat, Inc., and individual contributors
 
-TODO: ADD OUTPUT
+. . .
+
+    </div>
+</div>
+</body>
+</html>
+
 ----
 +
 . Delete the Pod:
@@ -132,11 +199,11 @@ wildfly-plain   1/1       Running   0          18s       10.245.1.3
 kubernetes> ./cluster/kubectl.sh logs wildfly-plain
 ----
 +
-. Delete the Pod as:
+. Delete the Replication Controller:
 
-  kubectl.sh create -f ~/workspaces/kubernetes-java-sample/wildfly-pod.yaml
+  kubectl.sh create -f ~/workspaces/kubernetes-java-sample/wildfly-rc.yaml
 
-== A Pod with one Container (Application Server and In-memory database, using WildFly + H2)
+== Java EE Application deployed in a Pod with one Container (WildFly + H2)
 
 . Create Java EE 7 sample application Replication Controller:
 +
@@ -215,19 +282,55 @@ replicationcontrollers/javaee7-hol
 
 == Two Pods with a Container each (WildFly and MySQL) and a Service (MySQL)
 
-. Start MySQL
+. Start MySQL Pod:
 +
 [source, text]
 ----
-./cluster/kubectl.sh create -f ~/workspaces/kubernetes-java-sample/mysql.yaml
+kubernetes> ./cluster/kubectl.sh create -f ~/workspaces/kubernetes-java-sample/app-mysql-pod.yaml 
+pods/mysql-pod
 ----
 +
-. Publish MySQL Service
+. Get status of the Pod:
 +
 [source, text]
 ----
-./cluster/kubectl.sh create -f ../kubernetes-java-sample/mysql-service.yaml
+kubernetes> ./cluster/kubectl.sh get -w po
+NAME        READY     STATUS    RESTARTS   AGE
+mysql-pod   0/1       Pending   0          4s
+NAME        READY     STATUS    RESTARTS   AGE
+mysql-pod   0/1       Running   0          44s
+mysql-pod   1/1       Running   0         44s
 ----
++
+. Start MySQL Service:
++
+[source, text]
+----
+kubernetes> ./cluster/kubectl.sh create -f ~/workspaces/kubernetes-java-sample/app-mysql-service.yaml 
+services/mysql-service
+----
++
+. Get status of the Service:
++
+[source, text]
+----
+kubernetes> ./cluster/kubectl.sh get -w se
+NAME            LABELS                                    SELECTOR                                IP(S)            PORT(S)
+kubernetes      component=apiserver,provider=kubernetes   <none>                                  10.247.0.1       443/TCP
+mysql-service   context=docker-k8s-lab,name=mysql-pod     context=docker-k8s-lab,name=mysql-pod   10.247.254.198   3306/TCP
+----
++
+If multiple services are running, then it can be narrowed by specifying labels:
++
+[source, text]
+----
+kubernetes> ./cluster/kubectl.sh get -w se -l context=docker-k8s-lab
+NAME            LABELS                                  SELECTOR                                IP(S)            PORT(S)
+mysql-service   context=docker-k8s-lab,name=mysql-pod   context=docker-k8s-lab,name=mysql-pod   10.247.254.198   3306/TCP
+Error from server: label selectors are not supported on services
+----
++
+Error message is filed as https://github.com/GoogleCloudPlatform/kubernetes/issues/11262[#11262].
 +
 . Start WildFly
 +
