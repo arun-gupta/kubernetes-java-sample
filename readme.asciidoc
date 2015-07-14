@@ -16,16 +16,60 @@ This project shows different recipes to run a Java EE 7 application using Kubern
 Detailed instructions:
 https://github.com/GoogleCloudPlatform/kubernetes/blob/master/docs/getting-started-guides/vagrant.md
 
-== One Pod with one Container and in-memory database
+== WildFly
 
-. Create Kubernetes cluster
+. Start WildFly pod
+
+  kubectl.sh create -f ~/workspaces/kubernetes-java-sample/wildfly-pod.yaml
+
+. Get the status of Pod:
 +
 [source, text]
 ----
-./cluster/kubectl.sh create -f ../kubernetes-java-sample/javaee7-hol.yaml
+kubernetes> ./cluster/kubectl.sh get -w po
+NAME            READY     STATUS    RESTARTS   AGE
+wildfly-plain   0/1       Pending   0          4s
+NAME            READY     STATUS    RESTARTS   AGE
+wildfly-plain   0/1       Running   0          5s
+wildfly-plain   1/1       Running   0         10s
 ----
 +
-. Get the status of Replication Controller:
+NOTE: Make sure to wait for the status to change to Running.
++
+. Find IP address of the pod as:
++
+[source, text]
+----
+kubernetes> ./cluster/kubectl.sh get -o=wide po
+NAME            READY     STATUS    RESTARTS   AGE       NODE
+wildfly-plain   1/1       Running   0          18s       10.245.1.3
+----
++
+. Access the main page of WildFly at http://10.245.1.3:8080/
++
+. Check the logs of the Pod as:
++
+[source, text]
+----
+kubernetes> ./cluster/kubectl.sh logs wildfly-plain
+----
++
+. Delete the Pod as:
+
+  kubectl.sh create -f ~/workspaces/kubernetes-java-sample/wildfly-pod.yaml
+
+
+== One Pod with one Container and in-memory database (using WildFly + H2)
+
+. Create Java EE 7 sample application Replication Controller:
++
+[source, text]
+----
+kubernetes> ./cluster/kubectl.sh create -f ~/workspaces/kubernetes-java-sample/javaee7-hol.yaml
+replicationcontrollers/javaee7-hol
+----
++
+. Get status of the Replication Controller:
 +
 [source, text]
 ----
@@ -34,7 +78,7 @@ CONTROLLER    CONTAINER(S)   IMAGE(S)                SELECTOR           REPLICAS
 javaee7-hol   master         arungupta/javaee7-hol   name=javaee7-hol   1
 ----
 +
-. Get the status of Pod:
+. Get status of the Pod:
 +
 [source, text]
 ----
@@ -48,7 +92,7 @@ javaee7-hol-0zku2   1/1       Running   0         2m
 +
 NOTE: Make sure to wait for the status to change to Running.
 +
-. Find the IP address of the pod as:
+. Find IP address of the pod as:
 +
 [source, text]
 ----
@@ -58,23 +102,54 @@ javaee7-hol-0zku2   1/1       Running   0          2m        10.245.1.3
 ----
 +
 . Access the application at http://10.245.1.3:8080/movieplex7/
++
+. Check logs of the Pod using the pod's name:
++
+[source, text]
+----
+kubernetes> ./cluster/kubectl.sh logs javaee7-hol-0zku2
+=========================================================================
+
+  JBoss Bootstrap Environment
+
+  JBOSS_HOME: /opt/jboss/wildfly
+
+  JAVA: /usr/lib/jvm/java/bin/java
+
+  JAVA_OPTS:  -server -XX:+UseCompressedOops  -server -XX:+UseCompressedOops -Xms64m -Xmx512m -XX:MaxPermSize=256m -Djava.net.preferIPv4Stack=true -Djboss.modules.system.pkgs=org.jboss.byteman -Djava.awt.headless=true
+
+=========================================================================
+
+. . .
+
+17:22:29,338 INFO  [org.jboss.as.server] (ServerService Thread Pool -- 37) WFLYSRV0010: Deployed "movieplex7-1.0-SNAPSHOT.war" (runtime-name : "movieplex7-1.0-SNAPSHOT.war")
+17:22:29,459 INFO  [org.jboss.as] (Controller Boot Thread) WFLYSRV0060: Http management interface listening on http://127.0.0.1:9990/management
+17:22:29,459 INFO  [org.jboss.as] (Controller Boot Thread) WFLYSRV0051: Admin console listening on http://127.0.0.1:9990
+17:22:29,460 INFO  [org.jboss.as] (Controller Boot Thread) WFLYSRV0025: WildFly Full 9.0.0.Final (WildFly Core 1.0.0.Final) started in 10029ms - Started 437 of 607 services (233 services are lazy, passive or on-demand)
+----
++
+. Delete the Replication Controller:
++
+[source, text]
+----
+kubernetes> ./cluster/kubectl.sh delete -f ~/workspaces/kubernetes-java-sample/javaee7-hol.yaml
+replicationcontrollers/javaee7-hol
+----
 
 == Two Pods with a Container each (WildFly and MySQL) and a Service (MySQL)
-
-Complete details: http://blog.arungupta.me/mysql-kubernetes-service-access-wildfly-pod-techtip72/
 
 . Start MySQL
 +
 [source, text]
 ----
-./cluster/kubectl.sh create -f ../kubernetes-java-sample/mysql.json
+./cluster/kubectl.sh create -f ../kubernetes-java-sample/mysql.yaml
 ----
 +
 . Publish MySQL Service
 +
 [source, text]
 ----
-./cluster/kubectl.sh create -f ../kubernetes-java-sample/mysql-service.json
+./cluster/kubectl.sh create -f ../kubernetes-java-sample/mysql-service.yaml
 ----
 +
 . Start WildFly
