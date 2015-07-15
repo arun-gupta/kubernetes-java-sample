@@ -163,19 +163,23 @@ replicationcontrollers/wildfly-rc
 [source, text]
 ----
 ./cluster/kubectl.sh get -w po
+NAME      READY     STATUS    RESTARTS   AGE
 NAME               READY     STATUS    RESTARTS   AGE
-wildfly-rc-15xg5   0/1       Pending   0          2s
-wildfly-rc-d5fbs   0/1       Pending   0          2s
-NAME               READY     STATUS    RESTARTS   AGE
-wildfly-rc-15xg5   0/1       Pending   0          5s
-wildfly-rc-d5fbs   0/1       Pending   0         5s
-wildfly-rc-d5fbs   0/1       Running   0         8s
-wildfly-rc-15xg5   0/1       Running   0         8s
-wildfly-rc-d5fbs   1/1       Running   0         15s
-wildfly-rc-15xg5   1/1       Running   0         15s
+wildfly-rc-bgtkg   0/1       Pending   0          1s
+wildfly-rc-l8fqv   0/1       Pending   0         1s
+wildfly-rc-bgtkg   0/1       Pending   0         1s
+wildfly-rc-l8fqv   0/1       Pending   0         1s
+wildfly-rc-bgtkg   0/1       Pending   0         1s
+wildfly-rc-l8fqv   0/1       Pending   0         1s
+wildfly-rc-bgtkg   0/1       Running   0         1m
+wildfly-rc-l8fqv   0/1       Running   0         1m
+wildfly-rc-bgtkg   1/1       Running   0         1m
+wildfly-rc-l8fqv   1/1       Running   0         1m
 ----
 +
 NOTE: Make sure to wait for the status to change to Running.
++
+Note down name of the Pods as ``wildfly-rc-bgtkg'' and ``wildfly-rc-bgtkg''.
 +
 . Get status of the Replication Controller:
 +
@@ -195,39 +199,38 @@ CONTROLLER   CONTAINER(S)     IMAGE(S)        SELECTOR       REPLICAS
 wildfly-rc   wildfly-rc-pod   jboss/wildfly   name=wildfly   2
 ----
 +
-. Get name of the running Pods:
-+
-[source, text]
-----
-./cluster/kubectl.sh get po
-NAME               READY     STATUS    RESTARTS   AGE
-wildfly-rc-15xg5   1/1       Running   0          36m
-wildfly-rc-d5fbs   1/1       Running   0          36m
-----
-+
 . Find IP address of each Pod (using the name):
 +
 [source, text]
 ----
-./cluster/kubectl.sh get -o template po wildfly-rc-15xg5 --template={{.status.podIP}}
-10.246.1.18
+./cluster/kubectl.sh get -o template po wildfly-rc-bgtkg --template={{.status.podIP}}
+10.246.1.5
 ----
 +
 Find IP address of the other Pod:
 +
 [source, text]
 ----
-./cluster/kubectl.sh get -o template po wildfly-rc-d5fbs --template={{.status.podIP}}
-10.246.1.19
+./cluster/kubectl.sh get -o template po wildfly-rc-l8fqv --template={{.status.podIP}}
+10.246.1.4
 ----
 +
 . As mentioned earlier, Pod's IP address is accessible only inside the cluster. Login to the minion to access WildFly's main page hosted by the containers:
 +
 [source, text]
 ----
+vagrant ssh minion-1
+Last login: Wed Jul 15 20:36:30 2015 from 10.0.2.2
+[vagrant@kubernetes-minion-1 ~]$ su -
+Password: 
+[root@kubernetes-minion-1 ~]# exit
+logout
+[vagrant@kubernetes-minion-1 ~]$ exit
+logout
+Connection to 127.0.0.1 closed.
 kubernetes> vagrant ssh minion-1
-Last login: Tue Jul 14 21:35:12 2015 from 10.0.2.2
-[vagrant@kubernetes-minion-1 ~]$ curl http://10.246.1.18:8080
+Last login: Wed Jul 15 20:39:23 2015 from 10.0.2.2
+[vagrant@kubernetes-minion-1 ~]$ curl http://10.246.1.4:8080/
 <!--
   ~ JBoss, Home of Professional Open Source.
 
@@ -236,10 +239,9 @@ Last login: Tue Jul 14 21:35:12 2015 from 10.0.2.2
 </div>
 </body>
 </html>
-[vagrant@kubernetes-minion-1 ~]$ curl http://10.246.1.19:8080
+[vagrant@kubernetes-minion-1 ~]$ curl http://10.246.1.5:8080/
 <!--
   ~ JBoss, Home of Professional Open Source.
-  ~ Copyright (c) 2014, Red Hat, Inc., and individual contributors
 
 . . .
 
@@ -256,21 +258,77 @@ Lets delete a Pod and see how a new Pod is automatically created.
 
 [source, text]
 ----
-kubernetes> ./cluster/kubectl.sh delete po wildfly-rc-15xg5
-pods/wildfly-rc-15xg5
-kubernetes> ./cluster/kubectl.sh get -w po
-NAME               READY     STATUS    RESTARTS   AGE
-wildfly-rc-0xoms   0/1       Pending   0          2s
-wildfly-rc-d5fbs   1/1       Running   0          48m
-NAME               READY     STATUS    RESTARTS   AGE
-wildfly-rc-0xoms   0/1       Pending   0          11s
-wildfly-rc-0xoms   0/1       Running   0         13s
-wildfly-rc-0xoms   1/1       Running   0         21s
+./cluster/kubectl.sh delete po wildfly-rc-l8fqv
+pods/wildfly-rc-l8fqv
 ----
 
-Notice how the Pod with name ``wildfly-rc-15xg5'' was deleted and a new Pod with the name ``wildfly-rc-0xoms'' was created.
+Status of the Pods can be seen in another shell:
+
+[source, text]
+----
+./cluster/kubectl.sh get -w po
+NAME               READY     STATUS    RESTARTS   AGE
+wildfly-rc-bgtkg   1/1       Running   0          2m
+wildfly-rc-l8fqv   1/1       Running   0          2m
+NAME               READY     STATUS    RESTARTS   AGE
+wildfly-rc-l8fqv   1/1       Running   0          3m
+wildfly-rc-xz6wu   0/1       Pending   0         2s
+wildfly-rc-xz6wu   0/1       Pending   0         2s
+wildfly-rc-xz6wu   0/1       Pending   0         12s
+wildfly-rc-xz6wu   0/1       Running   0         14s
+wildfly-rc-xz6wu   1/1       Running   0         22s
+----
+
+Notice how the Pod with name ``wildfly-rc-bgtkg'' was deleted and a new Pod with the name ``wildfly-rc-xz6wu'' was created.
 
 === Scaling Pods
+
+Replication Controller allows dynamic scaling up and down of Pods.
+
+. Scale up the number of Pods:
++
+[source, text]
+----
+./cluster/kubectl.sh scale --replicas=3 rc wildfly-rc
+scaled
+----
++
+. Status of the Pods can be seen in another shell:
++
+[source, text]
+----
+./cluster/kubectl.sh get -w po
+NAME               READY     STATUS    RESTARTS   AGE
+wildfly-rc-bgtkg   1/1       Running   0          3m
+wildfly-rc-xz6wu   1/1       Running   0          38s
+NAME               READY     STATUS    RESTARTS   AGE
+wildfly-rc-bymu7   0/1       Pending   0          2s
+wildfly-rc-bymu7   0/1       Pending   0         2s
+wildfly-rc-bymu7   0/1       Pending   0         2s
+wildfly-rc-bymu7   0/1       Running   0         3s
+wildfly-rc-bymu7   1/1       Running   0         12s
+----
++
+Notice a new Pod with the name ``wildfly-rc-bymu7'' is created.
++
+. Scale down the number of Pods:
++
+[source, text]
+----
+./cluster/kubectl.sh scale --replicas=1 rc wildfly-rc
+scaled
+----
++
+. Status of the Pods using `-w` is not shown correctly https://github.com/GoogleCloudPlatform/kubernetes/issues/11338[#11338]. But status of the Pods can be seen correctly as:
++
+[source, text]
+----
+./cluster/kubectl.sh get po
+NAME               READY     STATUS    RESTARTS   AGE
+wildfly-rc-bgtkg   1/1       Running   0          9m
+----
++
+Notice only one Pod is now running.
 
 === Rolling Updates
 
