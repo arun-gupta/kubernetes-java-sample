@@ -13,6 +13,7 @@ This project shows different recipes to run a Java EE application using Kubernet
   export KUBERNETES_PROVIDER=vagrant
   cluster/kube-up.sh
 
+.Kubernetes Cluster using Vagrant
 image::images/kubernetes-cluster-vagrant.png[]
 
 Detailed instructions:
@@ -22,6 +23,7 @@ https://github.com/GoogleCloudPlatform/kubernetes/blob/master/docs/getting-start
 
 This section will explain how to start a Pod with one Container. WildFly base Docker image will be used as the Container.
 
+.A Pod with One Container
 image::images/kubernetes-one-pod.png[]
 
 . Start a Pod with WildFly container:
@@ -150,6 +152,9 @@ And check that WildFly container running inside the Pod is accessible:
 == A Replication Controller with Two Replicas of a Pod (WildFly)
 
 This section will explain how to start a https://github.com/GoogleCloudPlatform/kubernetes/blob/master/docs/user-guide/replication-controller.md[Replication Controller] with two replicas of a Pod. Each Pod will have one WildFly container.
+
+.Kubernetes Replication Controller
+image::images/kubernetes-rc.png[]
 
 . Start a Replication Controller that has two replicas of a pod, each with a WildFly container:
 +
@@ -346,7 +351,7 @@ Finally, delete the Replication Controller:
 
 == Java EE Application deployed in a Pod with one Container (WildFly + H2 in-memory database)
 
-This section will show how to deploy a Java EE application in a Pod with one Container. WildFly, with in-memory H2 database, will be used as the container.
+This section will show how to deploy a Java EE application in a Pod with one Container. WildFly, with an in-memory H2 database, will be used as the container.
 
 . Create Java EE 7 sample application Replication Controller:
 +
@@ -474,7 +479,6 @@ This section will show how to run a WildFly and MySQL containers in a Pod. WildF
 image::images/kubernetes-service.png[]
 
 The order of Service and the targeted Pods does not matter. However Service needs to be started before any other Pods consuming the Service.
-
 
 . Start MySQL Pod:
 +
