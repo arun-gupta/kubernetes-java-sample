@@ -13,12 +13,16 @@ This project shows different recipes to run a Java EE application using Kubernet
   export KUBERNETES_PROVIDER=vagrant
   cluster/kube-up.sh
 
+image::images/kubernetes-cluster-vagrant.png[]
+
 Detailed instructions:
 https://github.com/GoogleCloudPlatform/kubernetes/blob/master/docs/getting-started-guides/vagrant.md
 
 == A Pod with One Container
 
 This section will explain how to start a Pod with one Container. WildFly base Docker image will be used as the Container.
+
+image::images/kubernetes-one-pod.png[]
 
 . Start a Pod with WildFly container:
 
@@ -145,7 +149,7 @@ And check that WildFly container running inside the Pod is accessible:
 
 == A Replication Controller with Two Replicas of a Pod (WildFly)
 
-This section will explain how to start a Replication Controller with two replicas of a Pod. Each Pod will have one WildFly container.
+This section will explain how to start a https://github.com/GoogleCloudPlatform/kubernetes/blob/master/docs/user-guide/replication-controller.md[Replication Controller] with two replicas of a Pod. Each Pod will have one WildFly container.
 
 . Start a Replication Controller that has two replicas of a pod, each with a WildFly container:
 +
@@ -244,7 +248,7 @@ Last login: Tue Jul 14 21:35:12 2015 from 10.0.2.2
 </html>
 ----
 
-=== Automatic Restart of Pods
+=== Rescheduling Pods
 
 Replication Controller ensures that specified number of pod ``replicas'' are running at any one time. If there are too many, the replication controller kills some pods. If there are too few, it starts more.
 
@@ -266,11 +270,21 @@ wildfly-rc-0xoms   1/1       Running   0         21s
 
 Notice how the Pod with name ``wildfly-rc-15xg5'' was deleted and a new Pod with the name ``wildfly-rc-0xoms'' was created.
 
+=== Scaling Pods
+
+=== Rolling Updates
+
+=== Multiple Release Tracks
+
+=== Delete the Replication Controller
+
 Finally, delete the Replication Controller:
 
   kubectl.sh create -f ~/workspaces/kubernetes-java-sample/wildfly-rc.yaml
 
-== Java EE Application deployed in a Pod with one Container (WildFly + H2)
+== Java EE Application deployed in a Pod with one Container (WildFly + H2 in-memory database)
+
+This section will show how to deploy a Java EE application in a Pod with one Container. WildFly, with in-memory H2 database, will be used as the container.
 
 . Create Java EE 7 sample application Replication Controller:
 +
@@ -280,45 +294,53 @@ kubernetes> ./cluster/kubectl.sh create -f ~/workspaces/kubernetes-java-sample/j
 replicationcontrollers/javaee7-hol
 ----
 +
-. Get status of the Replication Controller:
-+
-[source, text]
-----
-kubernetes> ./cluster/kubectl.sh get -w rc
-CONTROLLER    CONTAINER(S)   IMAGE(S)                SELECTOR           REPLICAS
-javaee7-hol   master         arungupta/javaee7-hol   name=javaee7-hol   1
-----
-+
 . Get status of the Pod:
 +
 [source, text]
 ----
-kubernetes> ./cluster/kubectl.sh get -w pod
+kubernetes> ./cluster/kubectl.sh get -w po
 NAME                READY     STATUS    RESTARTS   AGE
-javaee7-hol-0zku2   0/1       Pending   0          16s
+javaee7-hol-kt6bw   0/1       Pending   0          3s
 NAME                READY     STATUS    RESTARTS   AGE
-javaee7-hol-0zku2   0/1       Running   0          2m
-javaee7-hol-0zku2   1/1       Running   0         2m
+javaee7-hol-kt6bw   0/1       Pending   0          5s
+javaee7-hol-kt6bw   0/1       Running   0         7s
+javaee7-hol-kt6bw   1/1       Running   0         15s
 ----
 +
 NOTE: Make sure to wait for the status to change to Running.
++
+. Get status of the Replication Controller:
++
+[source, text]
+----
+kubernetes> ./cluster/kubectl.sh get rc
+CONTROLLER    CONTAINER(S)   IMAGE(S)                SELECTOR           REPLICAS
+javaee7-hol   master         arungupta/javaee7-hol   name=javaee7-hol   1
+----
 +
 . Find IP address of the pod as:
 +
 [source, text]
 ----
-kubernetes> ./cluster/kubectl.sh get -o=wide pod
-NAME                READY     STATUS    RESTARTS   AGE       NODE
-javaee7-hol-0zku2   1/1       Running   0          2m        10.245.1.3
+./cluster/kubectl.sh get -o template po javaee7-hol-kt6bw --template={{.status.podIP}}
+
 ----
 +
-. Access the application at http://10.245.1.3:8080/movieplex7/
+. As mentioned earlier, Pod's IP address is accessible only inside the cluster. Login to the minion to access application's main page hosted by the containers:
++
+[source, text]
+----
+kubernetes> vagrant ssh minion-1
+Last login: Tue Jul 14 21:35:12 2015 from 10.0.2.2
+[vagrant@kubernetes-minion-1 ~]$ curl http://10.246.1.104:8080/movieplex7
+----
 +
 . Check logs of the Pod using the pod's name:
 +
 [source, text]
 ----
-kubernetes> ./cluster/kubectl.sh logs javaee7-hol-0zku2
+kubernetes> ./cluster/kubectl.sh log javaee7-hol-kt6bw
+W0715 10:07:53.235698   14344 cmd.go:149] log is DEPRECATED and will be removed in a future version. Use logs instead.
 =========================================================================
 
   JBoss Bootstrap Environment
@@ -327,18 +349,49 @@ kubernetes> ./cluster/kubectl.sh logs javaee7-hol-0zku2
 
   JAVA: /usr/lib/jvm/java/bin/java
 
-  JAVA_OPTS:  -server -XX:+UseCompressedOops  -server -XX:+UseCompressedOops -Xms64m -Xmx512m -XX:MaxPermSize=256m -Djava.net.preferIPv4Stack=true -Djboss.modules.system.pkgs=org.jboss.byteman -Djava.awt.headless=true
+. . .
 
-=========================================================================
+17:03:12,322 INFO  [org.wildfly.extension.undertow] (ServerService Thread Pool -- 64) WFLYUT0021: Registered web context: /movieplex7
+17:03:12,369 INFO  [org.jboss.as.server] (ServerService Thread Pool -- 37) WFLYSRV0010: Deployed "movieplex7-1.0-SNAPSHOT.war" (runtime-name : "movieplex7-1.0-SNAPSHOT.war")
+17:03:12,515 INFO  [org.jboss.as] (Controller Boot Thread) WFLYSRV0060: Http management interface listening on http://127.0.0.1:9990/management
+17:03:12,516 INFO  [org.jboss.as] (Controller Boot Thread) WFLYSRV0051: Admin console listening on http://127.0.0.1:9990
+17:03:12,516 INFO  [org.jboss.as] (Controller Boot Thread) WFLYSRV0025: WildFly Full 9.0.0.Final (WildFly Core 1.0.0.Final) started in 11951ms - Started 437 of 607 services (233 services are lazy, passive or on-demand)
+----
+
+=== Access the Application on Host
+
+. `javaee7-hol.yaml` configuration file also exposes the `hostPort` on 8080. This allows port 8080 exposed by container to be forwarded at the port 8080 of the host. Get IP address of the host as:
++
+[source, text]
+----
+kubernetes> ./cluster/kubectl.sh get -o=wide po
+NAME                READY     STATUS    RESTARTS   AGE       NODE
+javaee7-hol-kt6bw   1/1       Running   0          8m        10.245.1.3
+----
++
+. Access the application on host as:
++
+[source, text]
+----
+kubernetes> curl http://10.245.1.3:8080/movieplex7/
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html>
+<!-- 
+/*
 
 . . .
 
-17:22:29,338 INFO  [org.jboss.as.server] (ServerService Thread Pool -- 37) WFLYSRV0010: Deployed "movieplex7-1.0-SNAPSHOT.war" (runtime-name : "movieplex7-1.0-SNAPSHOT.war")
-17:22:29,459 INFO  [org.jboss.as] (Controller Boot Thread) WFLYSRV0060: Http management interface listening on http://127.0.0.1:9990/management
-17:22:29,459 INFO  [org.jboss.as] (Controller Boot Thread) WFLYSRV0051: Admin console listening on http://127.0.0.1:9990
-17:22:29,460 INFO  [org.jboss.as] (Controller Boot Thread) WFLYSRV0025: WildFly Full 9.0.0.Final (WildFly Core 1.0.0.Final) started in 10029ms - Started 437 of 607 services (233 services are lazy, passive or on-demand)
+            <div id="content" class="left_content">
+                Showing 20 movies in 7 theaters!
+            
+            </div>
+        </div></body>
+
+</html>
 ----
-+
+
+=== Delete the Replication Controller
+
 . Delete the Replication Controller:
 +
 [source, text]
@@ -347,7 +400,19 @@ kubernetes> ./cluster/kubectl.sh delete -f ~/workspaces/kubernetes-java-sample/j
 replicationcontrollers/javaee7-hol
 ----
 
-== Two Pods with a Container each (WildFly and MySQL) and a Service (MySQL)
+== Two Pods with one Container each (WildFly and MySQL) and a Service (MySQL)
+
+Pods are ephemeral. IP address assigned to a Pod cannot be relied upon. Kubernetes, Replication Controller in particular, create and destroy Pods dynamically. A _consumer_ Pod cannot rely upon the IP address of a _producer_ Pod.
+
+https://github.com/GoogleCloudPlatform/kubernetes/blob/master/docs/user-guide/services.md[Kubernetes Service] is an abstraction which defines a set of logical Pods. The set of Pods targeted by a Servie are determined by labels associated with the Pods.
+
+This section will show how to run a WildFly and MySQL containers in a Pod. WildFly Pod will talk to the MySQL Pod using a Service.
+
+.Kubernetes Service
+image::images/kubernetes-service.png[]
+
+The order of Service and the targeted Pods does not matter. However Service needs to be started before any other Pods consuming the Service.
+
 
 . Start MySQL Pod:
 +
