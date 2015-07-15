@@ -328,11 +328,15 @@ NAME               READY     STATUS    RESTARTS   AGE
 wildfly-rc-bgtkg   1/1       Running   0          9m
 ----
 +
-Notice only one Pod is now running.
+Notice only one Pod is running now.
 
 === Rolling Updates
 
+PR for https://github.com/arun-gupta/kubernetes-java-sample/issues/1
+
 === Multiple Release Tracks
+
+PR for https://github.com/arun-gupta/kubernetes-java-sample/issues/2
 
 === Delete the Replication Controller
 
