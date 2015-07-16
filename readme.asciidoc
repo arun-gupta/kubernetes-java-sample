@@ -259,7 +259,7 @@ Last login: Wed Jul 15 20:39:23 2015 from 10.0.2.2
 
 Replication Controller ensures that specified number of pod ``replicas'' are running at any one time. If there are too many, the replication controller kills some pods. If there are too few, it starts more.
 
-Lets delete a Pod and see how a new Pod is automatically created.
+Lets start a Replication Controller with a couple of Pods. Delete a Pod and see how a new Pod is automatically rescheduled.
 
 [source, text]
 ----
@@ -284,7 +284,7 @@ wildfly-rc-xz6wu   0/1       Running   0         14s
 wildfly-rc-xz6wu   1/1       Running   0         22s
 ----
 
-Notice how the Pod with name ``wildfly-rc-bgtkg'' was deleted and a new Pod with the name ``wildfly-rc-xz6wu'' was created.
+Notice how Pod with name ``wildfly-rc-bgtkg'' was deleted and a new Pod with the name ``wildfly-rc-xz6wu'' was created.
 
 === Scaling Pods
 
@@ -532,6 +532,10 @@ mysql-pod   1/1       Running   0          4m
 ----
 +
 This is also the selector label used by Service to target Pods.
++
+When a Service is run on a node, the kubelet adds a set of environment variables for each active Service. It supports both Docker links compatible variables and simpler `{SVCNAME}_SERVICE_HOST` and `{SVCNAME}_SERVICE_PORT` variables, where the Service name is upper-cased and dashes are converted to underscores.
++
+Our service name is ``mysql-service'' and so `MYSQL_SERVICE_SERVICE_HOST` and `MYSQL_SERVICE_SERVICE_PORT` variables are available to other pods.
 +
 . Start WildFly Replication Controller:
 +
