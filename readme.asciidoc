@@ -427,7 +427,11 @@ W0715 10:07:53.235698   14344 cmd.go:149] log is DEPRECATED and will be removed 
 
 === Access the Application on Host
 
-. `javaee7-hol.yaml` configuration file also exposes the `hostPort` on 8080. This allows port 8080 exposed by container to be forwarded at the port 8080 of the host. Get IP address of the host as:
+. `javaee7-hol.yaml` configuration file also exposes the `hostPort` on 8080. This allows port 8080 exposed by container to be forwarded at the port 8080 of the host.
++
+NOTE: It is not recommended to publish `hostPort` as other Pods may try to use that port as well, and this will cause contention.
++
+Get IP address of the host as:
 +
 [source, text]
 ----
@@ -460,31 +464,31 @@ kubernetes> curl http://10.245.1.3:8080/movieplex7/
 === Delete the Replication Controller
 
 . Delete the Replication Controller:
-+
+
 [source, text]
 ----
 kubernetes> ./cluster/kubectl.sh delete -f ~/workspaces/kubernetes-java-sample/javaee7-hol.yaml
 replicationcontrollers/javaee7-hol
 ----
 
-== Two Pods with one Container each (WildFly and MySQL) and a Service (MySQL)
+== Kubernetes Service
 
 Pods are ephemeral. IP address assigned to a Pod cannot be relied upon. Kubernetes, Replication Controller in particular, create and destroy Pods dynamically. A _consumer_ Pod cannot rely upon the IP address of a _producer_ Pod.
 
 https://github.com/GoogleCloudPlatform/kubernetes/blob/master/docs/user-guide/services.md[Kubernetes Service] is an abstraction which defines a set of logical Pods. The set of Pods targeted by a Servie are determined by labels associated with the Pods.
 
-This section will show how to run a WildFly and MySQL containers in a Pod. WildFly Pod will talk to the MySQL Pod using a Service.
+This section will show how to run a WildFly and MySQL containers in separate Pods. WildFly Pod will talk to the MySQL Pod using a Service.
 
 .Kubernetes Service
 image::images/kubernetes-service.png[]
 
-The order of Service and the targeted Pods does not matter. However Service needs to be started before any other Pods consuming the Service.
+The order of Service and the targeted Pods does not matter. However Service needs to be started before any other Pods consuming the Service are started.
 
 . Start MySQL Pod:
 +
 [source, text]
 ----
-kubernetes> ./cluster/kubectl.sh create -f ~/workspaces/kubernetes-java-sample/app-mysql-pod.yaml 
+./cluster/kubectl.sh create -f ~/workspaces/kubernetes-java-sample/app-mysql-pod.yaml 
 pods/mysql-pod
 ----
 +
@@ -504,7 +508,7 @@ mysql-pod   1/1       Running   0         44s
 +
 [source, text]
 ----
-kubernetes> ./cluster/kubectl.sh create -f ~/workspaces/kubernetes-java-sample/app-mysql-service.yaml 
+./cluster/kubectl.sh create -f ~/workspaces/kubernetes-java-sample/app-mysql-service.yaml
 services/mysql-service
 ----
 +
@@ -512,48 +516,64 @@ services/mysql-service
 +
 [source, text]
 ----
-kubernetes> ./cluster/kubectl.sh get -w se
-NAME            LABELS                                    SELECTOR                                IP(S)            PORT(S)
-kubernetes      component=apiserver,provider=kubernetes   <none>                                  10.247.0.1       443/TCP
-mysql-service   context=docker-k8s-lab,name=mysql-pod     context=docker-k8s-lab,name=mysql-pod   10.247.254.198   3306/TCP
+./cluster/kubectl.sh get -w se
+NAME            LABELS                                    SELECTOR                                IP(S)          PORT(S)
+kubernetes      component=apiserver,provider=kubernetes   <none>                                  10.247.0.1     443/TCP
+mysql-service   context=docker-k8s-lab,name=mysql-pod     context=docker-k8s-lab,name=mysql-pod   10.247.63.43   3306/TCP
 ----
 +
 If multiple services are running, then it can be narrowed by specifying labels:
 +
 [source, text]
 ----
-kubernetes> ./cluster/kubectl.sh get -w se -l context=docker-k8s-lab
-NAME            LABELS                                  SELECTOR                                IP(S)            PORT(S)
-mysql-service   context=docker-k8s-lab,name=mysql-pod   context=docker-k8s-lab,name=mysql-pod   10.247.254.198   3306/TCP
-Error from server: label selectors are not supported on services
+./cluster/kubectl.sh  get -w po -l context=docker-k8s-lab,name=mysql-pod
+NAME        READY     STATUS    RESTARTS   AGE
+mysql-pod   1/1       Running   0          4m
 ----
 +
-Error message is filed as https://github.com/GoogleCloudPlatform/kubernetes/issues/11262[#11262].
+This is also the selector label used by Service to target Pods.
 +
-. Start WildFly
+. Start WildFly Replication Controller:
 +
 [source, text]
 ----
-./cluster/kubectl.sh create -f ../kubernetes-java-sample/wildfly.json
+./cluster/kubectl.sh create -f ~/workspaces/kubernetes-java-sample/app-wildfly-rc.yaml
+replicationcontrollers/wildfly-rc
 ----
 +
-. Get the WildFly host IP address
+. Check the status of Pod inside Replication Controller:
 +
 [source, text]
 ----
-./cluster/kubectl.sh get pods | grep wildfly | awk '{ print $5 }'
+./cluster/kubectl.sh get po
+NAME               READY     STATUS    RESTARTS   AGE
+mysql-pod          1/1       Running   0          1h
+wildfly-rc-w2kk5   1/1       Running   0          6m
 ----
 +
-Access the application at http://<IP-ADDRESS>:8080/employees/resources/employees
+. Get IP address of the Pod:
++
+[source, text]
+----
+./cluster/kubectl.sh get -o template po wildfly-rc-w2kk5 --template={{.status.podIP}}
+10.246.1.23
+----
++
+. Log in to minion and access the application:
++
+[source, text]
+----
+vagrant ssh minion-1
+Last login: Thu Jul 16 00:24:36 2015 from 10.0.2.2
+[vagrant@kubernetes-minion-1 ~]$ curl http://10.246.1.23:8080/employees/resources/employees/
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?><collection><employee><id>1</id><name>Penny</name></employee><employee><id>2</id><name>Sheldon</name></employee><employee><id>3</id><name>Amy</name></employee><employee><id>4</id><name>Leonard</name></employee><employee><id>5</id><name>Bernadette</name></employee><employee><id>6</id><name>Raj</name></employee><employee><id>7</id><name>Howard</name></employee><employee><id>8</id><name>Priya</name></employee></collection>
+----
+
+== Router front-ending the Service
+
+TODO
 
 == OpenShift
 
-=== Two Pods with a Container each, Wrapped in a Replication Controller, front-ended by a Service
-
-Complete details: http://blog.arungupta.me/openshift-v3-getting-started-javaee7-wildfly-mysql/
-
-=== Router front-ending the ``frontend'' Service
-
-TBD
-
+http://blog.arungupta.me/openshift-v3-getting-started-javaee7-wildfly-mysql/
 
