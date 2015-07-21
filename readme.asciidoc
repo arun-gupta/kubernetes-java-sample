@@ -260,7 +260,7 @@ Last login: Wed Jul 15 20:39:23 2015 from 10.0.2.2
 Replication Controller ensures that specified number of pod ``replicas'' are running at any one time. If there are too many, the replication controller kills some pods. If there are too few, it starts more.
 
 .Rescheduling Pods in Kubernetes
-image::images/kubernetes-pod-rescheduling.png.png[]
+image::images/kubernetes-pod-rescheduling.png[]
 
 Lets start a Replication Controller with a couple of Pods. Delete a Pod and see how a new Pod is automatically rescheduled.
 
@@ -292,6 +292,9 @@ Notice how Pod with name ``wildfly-rc-bgtkg'' was deleted and a new Pod with the
 === Scaling Pods
 
 Replication Controller allows dynamic scaling up and down of Pods.
+
+.Rescheduling Pods in Kubernetes
+image::images/kubernetes-scaling-pods.png[]
 
 . Scale up the number of Pods:
 +
