@@ -353,6 +353,9 @@ Finally, delete the Replication Controller:
 
 This section will show how to deploy a Java EE application in a Pod with one Container. WildFly, with an in-memory H2 database, will be used as the container.
 
+.Java EE Application in Kubernetes
+image::images/javaee7-hol.png[]
+
 . Create Java EE 7 sample application Replication Controller:
 +
 [source, text]
