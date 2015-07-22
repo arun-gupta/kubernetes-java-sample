@@ -484,7 +484,7 @@ replicationcontrollers/javaee7-hol
 
 Pods are ephemeral. IP address assigned to a Pod cannot be relied upon. Kubernetes, Replication Controller in particular, create and destroy Pods dynamically. A _consumer_ Pod cannot rely upon the IP address of a _producer_ Pod.
 
-https://github.com/GoogleCloudPlatform/kubernetes/blob/master/docs/user-guide/services.md[Kubernetes Service] is an abstraction which defines a set of logical Pods. The set of Pods targeted by a Servie are determined by labels associated with the Pods.
+https://github.com/GoogleCloudPlatform/kubernetes/blob/master/docs/user-guide/services.md[Kubernetes Service] is an abstraction which defines a set of logical Pods. The set of Pods targeted by a Service are determined by labels associated with the Pods.
 
 This section will show how to run a WildFly and MySQL containers in separate Pods. WildFly Pod will talk to the MySQL Pod using a Service.
 
