@@ -2,6 +2,22 @@
 
 This project shows different recipes to run a Java EE application using Kubernetes.
 
+== Kubernetes Concepts
+
+Key concepts of Kubernetes are explained below:
+
+. *Pods*: Collocated group of Docker containers that share an IP and storage volume
+. *Service*: Single, stable name for a set of pods, also acts as load balancer
+. *Replication Controller*: Manages the lifecycle of pods and ensures specified number are running
+. *Labels*: Used to organize and select group of objects
+. *etcd*: Distributed key-value store used to persist Kubernetes system state
+. *Master*: Hosts cluster-level control services, including the API server, scheduler, and controller manager
+. *Node*: Docker host running _kubelet_ (node agent) and proxy services
+. *Kubelet*: It runs on each node in the cluster and is responsible for node level pod management.
+
+.Kubernetes Architecture
+image::images/kubernetes-architecture.png[]
+
 == Initial setup
 
 . Download Kubernetes from
@@ -293,7 +309,7 @@ Notice how Pod with name ``wildfly-rc-bgtkg'' was deleted and a new Pod with the
 
 Replication Controller allows dynamic scaling up and down of Pods.
 
-.Rescheduling Pods in Kubernetes
+.Scaling Pods in Kubernetes
 image::images/kubernetes-scaling-pods.png[]
 
 . Scale up the number of Pods:
@@ -585,6 +601,30 @@ Last login: Thu Jul 16 00:24:36 2015 from 10.0.2.2
 == Router front-ending the Service
 
 TODO
+
+== Kubernetes Volumes
+
+http://kubernetes.io/v1.0/docs/user-guide/volumes.html
+
+== Kubernetes Application Health Checks
+
+http://kubernetes.io/v1.0/docs/user-guide/walkthrough/k8s201.html#health-checking
+
+Kubernetes cluster checks if the container process is still running, and if not, the container process is restarted. This basic level of health checking is already enabled for all containers running in the Kubernetes cluster.
+
+In addition, it also enables user implemented application health checks. These checks are performed by the Kubernetes cluster to ensure that the application is running ``correctly'' provided by the application.
+
+Currently there are three types of application health checks.
+
+. HTTP Health Checks
+. Container Exec
+. TCP Socket
+
+=== Kubernetes HTTP Health Check
+
+=== Kubernetes Container Exec Health Check
+
+=== Kubernetes TCP Socket Health Check
 
 == OpenShift
 
