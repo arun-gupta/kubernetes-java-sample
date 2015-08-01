@@ -163,7 +163,7 @@ And check that WildFly container running inside the Pod is accessible:
 +
 . Delete the Pod:
 
-  kubectl.sh create -f ~/workspaces/kubernetes-java-sample/wildfly-pod.yaml
+  kubectl.sh delete pod wildfly-pod
 
 == A Replication Controller with Two Replicas of a Pod (WildFly)
 
@@ -240,15 +240,6 @@ Find IP address of the other Pod:
 +
 [source, text]
 ----
-vagrant ssh minion-1
-Last login: Wed Jul 15 20:36:30 2015 from 10.0.2.2
-[vagrant@kubernetes-minion-1 ~]$ su -
-Password: 
-[root@kubernetes-minion-1 ~]# exit
-logout
-[vagrant@kubernetes-minion-1 ~]$ exit
-logout
-Connection to 127.0.0.1 closed.
 kubernetes> vagrant ssh minion-1
 Last login: Wed Jul 15 20:39:23 2015 from 10.0.2.2
 [vagrant@kubernetes-minion-1 ~]$ curl http://10.246.1.4:8080/
@@ -367,9 +358,9 @@ PR for https://github.com/arun-gupta/kubernetes-java-sample/issues/2
 
 === Delete the Replication Controller
 
-Finally, delete the Replication Controller:
+Finally, delete the Replication Controller and pods:
 
-  kubectl.sh create -f ~/workspaces/kubernetes-java-sample/wildfly-rc.yaml
+  kubectl.sh delete pods,rc -l name=wildfly
 
 == Java EE Application deployed in a Pod with one Container (WildFly + H2 in-memory database)
 
@@ -488,11 +479,12 @@ kubernetes> curl http://10.245.1.3:8080/movieplex7/
 
 === Delete the Replication Controller
 
-. Delete the Replication Controller:
+. Delete the Replication Controller and pods:
 
 [source, text]
 ----
-kubernetes> ./cluster/kubectl.sh delete -f ~/workspaces/kubernetes-java-sample/javaee7-hol.yaml
+kubernetes> ./cluster/kubectl.sh delete pods,rc -l name=javaee7-hol
+pods/javaee7-hol-gwa7c
 replicationcontrollers/javaee7-hol
 ----
 
