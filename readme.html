@@ -708,7 +708,7 @@ Last login: Tue Jul 14 21:29:24 2015 from 10.0.2.2
 <p>Delete the Pod:</p>
 <div class="literalblock">
 <div class="content">
-<pre>kubectl.sh create -f ~/workspaces/kubernetes-java-sample/wildfly-pod.yaml</pre>
+<pre>kubectl.sh delete -f ~/workspaces/kubernetes-java-sample/wildfly-pod.yaml</pre>
 </div>
 </div>
 </li>
@@ -816,16 +816,7 @@ wildfly-rc   wildfly-rc-pod   jboss/wildfly   name=wildfly   2</code></pre>
 <p>As mentioned earlier, Pod&#8217;s IP address is accessible only inside the cluster. Login to the minion to access WildFly&#8217;s main page hosted by the containers:</p>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-text" data-lang="text">vagrant ssh minion-1
-Last login: Wed Jul 15 20:36:30 2015 from 10.0.2.2
-[vagrant@kubernetes-minion-1 ~]$ su -
-Password:
-[root@kubernetes-minion-1 ~]# exit
-logout
-[vagrant@kubernetes-minion-1 ~]$ exit
-logout
-Connection to 127.0.0.1 closed.
-kubernetes&gt; vagrant ssh minion-1
+<pre class="highlight"><code class="language-text" data-lang="text">kubernetes&gt; vagrant ssh minion-1
 Last login: Wed Jul 15 20:39:23 2015 from 10.0.2.2
 [vagrant@kubernetes-minion-1 ~]$ curl http://10.246.1.4:8080/
 &lt;!--
@@ -978,7 +969,7 @@ wildfly-rc-bgtkg   1/1       Running   0          9m</code></pre>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>kubectl.sh create -f ~/workspaces/kubernetes-java-sample/wildfly-rc.yaml</pre>
+<pre>kubectl.sh delete -f ~/workspaces/kubernetes-java-sample/wildfly-rc.yaml</pre>
 </div>
 </div>
 </div>
@@ -1486,7 +1477,7 @@ replicationcontrollers/wildfly-rc</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-08-18 12:00:21 PDT
+Last updated 2015-08-18 12:02:19 PDT
 </div>
 </div>
 </body>
