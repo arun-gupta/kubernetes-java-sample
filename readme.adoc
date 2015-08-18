@@ -1,6 +1,12 @@
 = Kubernetes Java Samples
+:toc:
+:toclevels: 3
+:toc-placement!:
+
+toc::[]
 
 This project shows different recipes to run a Java EE application using Kubernetes.
+
 
 == Kubernetes Concepts
 
@@ -21,19 +27,19 @@ image::images/kubernetes-architecture.png[]
 == Initial setup
 
 . Download Kubernetes from
-  https://github.com/GoogleCloudPlatform/kubernetes/releases/download/v1.0.0/kubernetes.tar.gz
+  https://github.com/kubernetes/kubernetes/releases/download/v1.0.1/kubernetes.tar.gz
   and extract.
 . Start Kubernetes using Vagrant
 
   cd kubernetes
-  export KUBERNETES_PROVIDER=vagrant
+  export KUBERNETES_PROVIDER#vagrant
   cluster/kube-up.sh
 
 .Kubernetes Cluster using Vagrant
 image::images/kubernetes-cluster-vagrant.png[]
 
 Detailed instructions:
-https://github.com/GoogleCloudPlatform/kubernetes/blob/master/docs/getting-started-guides/vagrant.md
+https://github.com/kubernetes/kubernetes/blob/master/docs/getting-started-guides/vagrant.md
 
 == A Pod with One Container
 
@@ -167,7 +173,7 @@ And check that WildFly container running inside the Pod is accessible:
 
 == A Replication Controller with Two Replicas of a Pod (WildFly)
 
-This section will explain how to start a https://github.com/GoogleCloudPlatform/kubernetes/blob/master/docs/user-guide/replication-controller.md[Replication Controller] with two replicas of a Pod. Each Pod will have one WildFly container.
+This section will explain how to start a https://github.com/kubernetes/kubernetes/blob/master/docs/user-guide/replication-controller.md[Replication Controller] with two replicas of a Pod. Each Pod will have one WildFly container.
 
 .Kubernetes Replication Controller
 image::images/kubernetes-rc.png[]
@@ -200,7 +206,7 @@ wildfly-rc-l8fqv   1/1       Running   0         1m
 +
 NOTE: Make sure to wait for the status to change to Running.
 +
-Note down name of the Pods as ``wildfly-rc-bgtkg'' and ``wildfly-rc-bgtkg''.
+Note down name of the Pods as "`wildfly-rc-bgtkg`" and "`wildfly-rc-bgtkg`".
 +
 . Get status of the Replication Controller:
 +
@@ -273,7 +279,7 @@ Last login: Wed Jul 15 20:39:23 2015 from 10.0.2.2
 
 === Rescheduling Pods
 
-Replication Controller ensures that specified number of pod ``replicas'' are running at any one time. If there are too many, the replication controller kills some pods. If there are too few, it starts more.
+Replication Controller ensures that specified number of pod "`replicas`" are running at any one time. If there are too many, the replication controller kills some pods. If there are too few, it starts more.
 
 .Rescheduling Pods in Kubernetes
 image::images/kubernetes-pod-rescheduling.png[]
@@ -303,7 +309,7 @@ wildfly-rc-xz6wu   0/1       Running   0         14s
 wildfly-rc-xz6wu   1/1       Running   0         22s
 ----
 
-Notice how Pod with name ``wildfly-rc-bgtkg'' was deleted and a new Pod with the name ``wildfly-rc-xz6wu'' was created.
+Notice how Pod with name "`wildfly-rc-bgtkg`" was deleted and a new Pod with the name "`wildfly-rc-xz6wu`" was created.
 
 === Scaling Pods
 
@@ -336,7 +342,7 @@ wildfly-rc-bymu7   0/1       Running   0         3s
 wildfly-rc-bymu7   1/1       Running   0         12s
 ----
 +
-Notice a new Pod with the name ``wildfly-rc-bymu7'' is created.
+Notice a new Pod with the name "`wildfly-rc-bymu7`" is created.
 +
 . Scale down the number of Pods:
 +
@@ -346,7 +352,7 @@ Notice a new Pod with the name ``wildfly-rc-bymu7'' is created.
 scaled
 ----
 +
-. Status of the Pods using `-w` is not shown correctly https://github.com/GoogleCloudPlatform/kubernetes/issues/11338[#11338]. But status of the Pods can be seen correctly as:
+. Status of the Pods using `-w` is not shown correctly https://github.com/kubernetes/kubernetes/issues/11338[#11338]. But status of the Pods can be seen correctly as:
 +
 [source, text]
 ----
@@ -500,7 +506,7 @@ replicationcontrollers/javaee7-hol
 
 Pods are ephemeral. IP address assigned to a Pod cannot be relied upon. Kubernetes, Replication Controller in particular, create and destroy Pods dynamically. A _consumer_ Pod cannot rely upon the IP address of a _producer_ Pod.
 
-https://github.com/GoogleCloudPlatform/kubernetes/blob/master/docs/user-guide/services.md[Kubernetes Service] is an abstraction which defines a set of logical Pods. The set of Pods targeted by a Service are determined by labels associated with the Pods.
+https://github.com/kubernetes/kubernetes/blob/master/docs/user-guide/services.md[Kubernetes Service] is an abstraction which defines a set of logical Pods. The set of Pods targeted by a Service are determined by labels associated with the Pods.
 
 This section will show how to run a WildFly and MySQL containers in separate Pods. WildFly Pod will talk to the MySQL Pod using a Service.
 
@@ -543,7 +549,7 @@ services/mysql-service
 ----
 ./cluster/kubectl.sh get -w se
 NAME            LABELS                                    SELECTOR                                IP(S)          PORT(S)
-kubernetes      component=apiserver,provider=kubernetes   <none>                                  10.247.0.1     443/TCP
+kubernetes      component#apiserver,provider=kubernetes   <none>                                  10.247.0.1     443/TCP
 mysql-service   context=docker-k8s-lab,name=mysql-pod     context=docker-k8s-lab,name=mysql-pod   10.247.63.43   3306/TCP
 ----
 +
@@ -560,7 +566,7 @@ This is also the selector label used by Service to target Pods.
 +
 When a Service is run on a node, the kubelet adds a set of environment variables for each active Service. It supports both Docker links compatible variables and simpler `{SVCNAME}_SERVICE_HOST` and `{SVCNAME}_SERVICE_PORT` variables, where the Service name is upper-cased and dashes are converted to underscores.
 +
-Our service name is ``mysql-service'' and so `MYSQL_SERVICE_SERVICE_HOST` and `MYSQL_SERVICE_SERVICE_PORT` variables are available to other pods.
+Our service name is "`mysql-service`" and so `MYSQL_SERVICE_SERVICE_HOST` and `MYSQL_SERVICE_SERVICE_PORT` variables are available to other pods.
 +
 . Start WildFly Replication Controller:
 +
@@ -598,6 +604,96 @@ Last login: Thu Jul 16 00:24:36 2015 from 10.0.2.2
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?><collection><employee><id>1</id><name>Penny</name></employee><employee><id>2</id><name>Sheldon</name></employee><employee><id>3</id><name>Amy</name></employee><employee><id>4</id><name>Leonard</name></employee><employee><id>5</id><name>Bernadette</name></employee><employee><id>6</id><name>Raj</name></employee><employee><id>7</id><name>Howard</name></employee><employee><id>8</id><name>Priya</name></employee></collection>
 ----
 
+== Kubernetes Application
+
+Kubernetes allow multiple resources to be specified in a single configuration file. This allows to create a "`Kubernetes Application`" that can consists of multiple resources easily.
+
+Previous section showed how to deploy the Java EE application using multiple configuration files. This application can be delpoyed using a single configuration file as well.
+
+. Start the application using the configuration file:
++
+[source, yaml]
+....
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mysql-pod
+  labels:
+    name: mysql-pod
+    context: docker-k8s-lab
+spec:
+  containers:
+    -
+      name: mysql
+      image: mysql:latest
+      env:
+        -
+          name: "MYSQL_USER"
+          value: "mysql"
+        -
+          name: "MYSQL_PASSWORD"
+          value: "mysql"
+        -
+          name: "MYSQL_DATABASE"
+          value: "sample"
+        -
+          name: "MYSQL_ROOT_PASSWORD"
+          value: "supersecret"
+      ports:
+        -
+          containerPort: 3306
+----
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-service
+  labels:
+    name: mysql-pod
+    context: docker-k8s-lab
+spec:
+  ports:
+    # the port that this service should serve on
+    - port: 3306
+  # label keys and values that must match in order to receive traffic for this service
+  selector:
+    name: mysql-pod
+    context: docker-k8s-lab
+----
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: wildfly-rc
+  labels:
+    name: wildfly
+    context: docker-k8s-lab
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: wildfly
+    spec:
+      containers:
+      - name: wildfly-rc-pod
+        image: arungupta/wildfly-mysql-javaee7:k8s
+        ports:
+        - containerPort: 8080
+....
++
+Notice that each section, one each for MySQL Pod, MySQL Service, and WildFly Replication Controller, is separated by `----`.
++
+. Start the application:
++
+[source, text]
+----
+./cluster/kubectl.sh create -f ~/workspaces/kubernetes-java-sample/app.yaml
+pods/mysql-pod
+services/mysql-service
+replicationcontrollers/wildfly-rc
+----
++
+. Application can accessed by logging into minion as explained in the previous section.
+
 == Router front-ending the Service
 
 TODO
@@ -610,9 +706,9 @@ http://kubernetes.io/v1.0/docs/user-guide/volumes.html
 
 http://kubernetes.io/v1.0/docs/user-guide/walkthrough/k8s201.html#health-checking
 
-Kubernetes cluster checks if the container process is still running, and if not, the container process is restarted. This basic level of health checking is already enabled for all containers running in the Kubernetes cluster.
+Kubernetes cluster checks if the container process is still running, and if not, the container process is restarted. This basic level of health checking is already enabled for all containers running in the Kubernetes cluster. This health check is performed by Kubelet.
 
-In addition, it also enables user implemented application health checks. These checks are performed by the Kubernetes cluster to ensure that the application is running ``correctly'' provided by the application.
+In addition, it also enables user implemented application health checks. These checks are performed by the Kubernetes cluster to ensure that the application is running "`correctly`" provided by the application.
 
 Currently there are three types of application health checks.
 
@@ -630,3 +726,16 @@ Currently there are three types of application health checks.
 
 http://blog.arungupta.me/openshift-v3-getting-started-javaee7-wildfly-mysql/
 
+== Fabric 8
+
+=== Console
+
+Allows to package and deploy application using a Console
+
+=== Visualization of resources
+
+=== Inject Kubernetes resources using @Inject
+
+=== Maven plugin to generate JSON for your WAR file
+
+=== Deploy application to Kubernetes
