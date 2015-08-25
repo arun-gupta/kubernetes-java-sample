@@ -32,7 +32,7 @@ image::images/kubernetes-architecture.png[]
 . Start Kubernetes using Vagrant
 
   cd kubernetes
-  export KUBERNETES_PROVIDER#vagrant
+  export KUBERNETES_PROVIDER=vagrant
   cluster/kube-up.sh
 
 .Kubernetes Cluster using Vagrant
