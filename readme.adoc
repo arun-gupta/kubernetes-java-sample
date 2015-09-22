@@ -50,7 +50,8 @@ image::images/kubernetes-one-pod.png[]
 
 . Start a Pod with WildFly container:
 
-  ./cluster/kubectl.sh create -f ~/workspaces/kubernetes-java-sample/wildfly-pod.yaml
+  kubernetes> ./cluster/kubectl.sh create -f ~/workspaces/kubernetes-java-sample/wildfly-pod.yaml
+
 
 . Get status of the Pod:
 +
@@ -70,7 +71,7 @@ NOTE: Make sure to wait for the status to change to Running.
 +
 [source, text]
 ----
-./cluster/kubectl.sh describe po wildfly-pod
+kubernetes> ./cluster/kubectl.sh describe po wildfly-pod
 Name:				wildfly-pod
 Namespace:			default
 Image(s):			jboss/wildfly
@@ -109,14 +110,14 @@ Only the IP address can be obtained as:
 +
 [source, text]
 ----
-./cluster/kubectl.sh get -o template po wildfly-pod --template={{.status.podIP}}
+kubernetes> ./cluster/kubectl.sh get -o template po wildfly-pod --template={{.status.podIP}}
 ----
 +
 . Check logs of the Pod:
 +
 [source, text]
 ----
-./cluster/kubectl.sh logs wildfly-pod
+kubernetes> ./cluster/kubectl.sh logs wildfly-pod
 =========================================================================
 
   JBoss Bootstrap Environment
@@ -169,7 +170,7 @@ And check that WildFly container running inside the Pod is accessible:
 +
 . Delete the Pod:
 
-  kubectl.sh delete -f ~/workspaces/kubernetes-java-sample/wildfly-pod.yaml
+  kubernetes> ./cluster/kubectl.sh delete -f ~/workspaces/kubernetes-java-sample/wildfly-pod.yaml
 
 == A Replication Controller with Two Replicas of a Pod (WildFly)
 
@@ -182,14 +183,13 @@ image::images/kubernetes-rc.png[]
 +
 [source, text]
 ----
-./cluster/kubectl.sh create -f ~/workspaces/kubernetes-java-sample/wildfly-rc.yaml 
-replicationcontrollers/wildfly-rc
+kubernetes> ./cluster/kubectl.sh create -f ~/workspaces/kubernetes-java-sample/wildfly-rc.yaml 
 ----
 . Get status of the Pods:
 +
 [source, text]
 ----
-./cluster/kubectl.sh get -w po
+kubernetes> ./cluster/kubectl.sh get -w po
 NAME      READY     STATUS    RESTARTS   AGE
 NAME               READY     STATUS    RESTARTS   AGE
 wildfly-rc-bgtkg   0/1       Pending   0          1s
@@ -206,13 +206,13 @@ wildfly-rc-l8fqv   1/1       Running   0         1m
 +
 NOTE: Make sure to wait for the status to change to Running.
 +
-Note down name of the Pods as "`wildfly-rc-bgtkg`" and "`wildfly-rc-bgtkg`".
+Note down name of the Pods as "`wildfly-rc-bgtkg`" and "`wildfly-rc-l8fqv`".
 +
 . Get status of the Replication Controller:
 +
 [source, text]
 ----
-./cluster/kubectl.sh get rc
+kubernetes> ./cluster/kubectl.sh get rc
 CONTROLLER   CONTAINER(S)     IMAGE(S)        SELECTOR       REPLICAS
 wildfly-rc   wildfly-rc-pod   jboss/wildfly   name=wildfly   2
 ----
@@ -221,7 +221,7 @@ If multiple Replication Controllers are running then you can query for this spec
 +
 [source, text]
 ----
-./cluster/kubectl.sh get rc -l name=wildfly
+kubernetes> ./cluster/kubectl.sh get rc -l name=wildfly
 CONTROLLER   CONTAINER(S)     IMAGE(S)        SELECTOR       REPLICAS
 wildfly-rc   wildfly-rc-pod   jboss/wildfly   name=wildfly   2
 ----
@@ -230,7 +230,7 @@ wildfly-rc   wildfly-rc-pod   jboss/wildfly   name=wildfly   2
 +
 [source, text]
 ----
-./cluster/kubectl.sh get -o template po wildfly-rc-bgtkg --template={{.status.podIP}}
+kubernetes> ./cluster/kubectl.sh get -o template po wildfly-rc-bgtkg --template={{.status.podIP}}
 10.246.1.5
 ----
 +
@@ -238,7 +238,7 @@ Find IP address of the other Pod:
 +
 [source, text]
 ----
-./cluster/kubectl.sh get -o template po wildfly-rc-l8fqv --template={{.status.podIP}}
+kubernetes> ./cluster/kubectl.sh get -o template po wildfly-rc-l8fqv --template={{.status.podIP}}
 10.246.1.4
 ----
 +
@@ -279,7 +279,7 @@ Lets start a Replication Controller with a couple of Pods. Delete a Pod and see 
 
 [source, text]
 ----
-./cluster/kubectl.sh delete po wildfly-rc-l8fqv
+kubernetes> ./cluster/kubectl.sh delete po wildfly-rc-l8fqv
 pods/wildfly-rc-l8fqv
 ----
 
@@ -287,7 +287,7 @@ Status of the Pods can be seen in another shell:
 
 [source, text]
 ----
-./cluster/kubectl.sh get -w po
+kubernetes> ./cluster/kubectl.sh get -w po
 NAME               READY     STATUS    RESTARTS   AGE
 wildfly-rc-bgtkg   1/1       Running   0          2m
 wildfly-rc-l8fqv   1/1       Running   0          2m
@@ -313,7 +313,7 @@ image::images/kubernetes-scaling-pods.png[]
 +
 [source, text]
 ----
-./cluster/kubectl.sh scale --replicas=3 rc wildfly-rc
+kubernetes> ./cluster/kubectl.sh scale --replicas=3 rc wildfly-rc
 scaled
 ----
 +
@@ -321,7 +321,7 @@ scaled
 +
 [source, text]
 ----
-./cluster/kubectl.sh get -w po
+kubernetes> ./cluster/kubectl.sh get -w po
 NAME               READY     STATUS    RESTARTS   AGE
 wildfly-rc-bgtkg   1/1       Running   0          3m
 wildfly-rc-xz6wu   1/1       Running   0          38s
@@ -339,7 +339,7 @@ Notice a new Pod with the name "`wildfly-rc-bymu7`" is created.
 +
 [source, text]
 ----
-./cluster/kubectl.sh scale --replicas=1 rc wildfly-rc
+kubernetes> ./cluster/kubectl.sh scale --replicas=1 rc wildfly-rc
 scaled
 ----
 +
@@ -347,7 +347,7 @@ scaled
 +
 [source, text]
 ----
-./cluster/kubectl.sh get po
+kubernetes> ./cluster/kubectl.sh get po
 NAME               READY     STATUS    RESTARTS   AGE
 wildfly-rc-bgtkg   1/1       Running   0          9m
 ----
@@ -366,7 +366,10 @@ PR for https://github.com/arun-gupta/kubernetes-java-sample/issues/2
 
 Finally, delete the Replication Controller:
 
-  kubectl.sh delete -f ~/workspaces/kubernetes-java-sample/wildfly-rc.yaml
+[source, text]
+----
+kubernetes> ./cluster/kubectl.sh delete -f ~/workspaces/kubernetes-java-sample/wildfly-rc.yaml
+----
 
 == Java EE Application deployed in a Pod with one Container (WildFly + H2 in-memory database)
 
@@ -390,7 +393,6 @@ replicationcontrollers/javaee7-hol
 kubernetes> ./cluster/kubectl.sh get -w po
 NAME                READY     STATUS    RESTARTS   AGE
 javaee7-hol-kt6bw   0/1       Pending   0          3s
-NAME                READY     STATUS    RESTARTS   AGE
 javaee7-hol-kt6bw   0/1       Pending   0          5s
 javaee7-hol-kt6bw   0/1       Running   0         7s
 javaee7-hol-kt6bw   1/1       Running   0         15s
@@ -411,9 +413,9 @@ javaee7-hol   master         arungupta/javaee7-hol   name=javaee7-hol   1
 +
 [source, text]
 ----
-./cluster/kubectl.sh get -o template po javaee7-hol-kt6bw --template={{.status.podIP}}
-
+kubernetes> ./cluster/kubectl.sh get -o template po javaee7-hol-kt6bw --template={{.status.podIP}}
 ----
+
 +
 . As mentioned earlier, Pod's IP address is accessible only inside the cluster. Login to the minion to access application's main page hosted by the containers:
 +
@@ -421,14 +423,18 @@ javaee7-hol   master         arungupta/javaee7-hol   name=javaee7-hol   1
 ----
 kubernetes> vagrant ssh minion-1
 Last login: Tue Jul 14 21:35:12 2015 from 10.0.2.2
-[vagrant@kubernetes-minion-1 ~]$ curl http://10.246.1.104:8080/movieplex7
+[vagrant@kubernetes-minion-1 ~]$ curl http://10.246.1.104:8080/movieplex7/
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html>
+ ...
+</html>
 ----
 +
 . Check logs of the Pod using the pod's name:
 +
 [source, text]
 ----
-kubernetes> ./cluster/kubectl.sh log javaee7-hol-kt6bw
+kubernetes> ./cluster/kubectl.sh logs javaee7-hol-kt6bw
 W0715 10:07:53.235698   14344 cmd.go:149] log is DEPRECATED and will be removed in a future version. Use logs instead.
 =========================================================================
 
@@ -510,7 +516,7 @@ The order of Service and the targeted Pods does not matter. However Service need
 +
 [source, text]
 ----
-./cluster/kubectl.sh create -f ~/workspaces/kubernetes-java-sample/app-mysql-pod.yaml 
+kubernetes> ./cluster/kubectl.sh create -f ~/workspaces/kubernetes-java-sample/app-mysql-pod.yaml 
 pods/mysql-pod
 ----
 +
@@ -521,16 +527,15 @@ pods/mysql-pod
 kubernetes> ./cluster/kubectl.sh get -w po
 NAME        READY     STATUS    RESTARTS   AGE
 mysql-pod   0/1       Pending   0          4s
-NAME        READY     STATUS    RESTARTS   AGE
 mysql-pod   0/1       Running   0          44s
-mysql-pod   1/1       Running   0         44s
+mysql-pod   1/1       Running   0          44s
 ----
 +
 . Start MySQL Service:
 +
 [source, text]
 ----
-./cluster/kubectl.sh create -f ~/workspaces/kubernetes-java-sample/app-mysql-service.yaml
+kubernetes> ./cluster/kubectl.sh create -f ~/workspaces/kubernetes-java-sample/app-mysql-service.yaml
 services/mysql-service
 ----
 +
@@ -538,17 +543,17 @@ services/mysql-service
 +
 [source, text]
 ----
-./cluster/kubectl.sh get -w se
+kubernetes> ./cluster/kubectl.sh get -w se
 NAME            LABELS                                    SELECTOR                                IP(S)          PORT(S)
 kubernetes      component#apiserver,provider=kubernetes   <none>                                  10.247.0.1     443/TCP
 mysql-service   context=docker-k8s-lab,name=mysql-pod     context=docker-k8s-lab,name=mysql-pod   10.247.63.43   3306/TCP
 ----
 +
-If multiple services are running, then it can be narrowed by specifying labels:
+If multiple services are running, pods status can be narrowed by specifying labels:
 +
 [source, text]
 ----
-./cluster/kubectl.sh  get -w po -l context=docker-k8s-lab,name=mysql-pod
+kubernetes> ./cluster/kubectl.sh  get -w po -l context=docker-k8s-lab,name=mysql-pod
 NAME        READY     STATUS    RESTARTS   AGE
 mysql-pod   1/1       Running   0          4m
 ----
@@ -563,7 +568,7 @@ Our service name is "`mysql-service`" and so `MYSQL_SERVICE_SERVICE_HOST` and `M
 +
 [source, text]
 ----
-./cluster/kubectl.sh create -f ~/workspaces/kubernetes-java-sample/app-wildfly-rc.yaml
+kubernetes> ./cluster/kubectl.sh create -f ~/workspaces/kubernetes-java-sample/app-wildfly-rc.yaml
 replicationcontrollers/wildfly-rc
 ----
 +
@@ -571,7 +576,7 @@ replicationcontrollers/wildfly-rc
 +
 [source, text]
 ----
-./cluster/kubectl.sh get po
+kubernetes> ./cluster/kubectl.sh get po
 NAME               READY     STATUS    RESTARTS   AGE
 mysql-pod          1/1       Running   0          1h
 wildfly-rc-w2kk5   1/1       Running   0          6m
@@ -581,7 +586,7 @@ wildfly-rc-w2kk5   1/1       Running   0          6m
 +
 [source, text]
 ----
-./cluster/kubectl.sh get -o template po wildfly-rc-w2kk5 --template={{.status.podIP}}
+kubernetes> ./cluster/kubectl.sh get -o template po wildfly-rc-w2kk5 --template={{.status.podIP}}
 10.246.1.23
 ----
 +
@@ -589,7 +594,7 @@ wildfly-rc-w2kk5   1/1       Running   0          6m
 +
 [source, text]
 ----
-vagrant ssh minion-1
+kubernetes> vagrant ssh minion-1
 Last login: Thu Jul 16 00:24:36 2015 from 10.0.2.2
 [vagrant@kubernetes-minion-1 ~]$ curl http://10.246.1.23:8080/employees/resources/employees/
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?><collection><employee><id>1</id><name>Penny</name></employee><employee><id>2</id><name>Sheldon</name></employee><employee><id>3</id><name>Amy</name></employee><employee><id>4</id><name>Leonard</name></employee><employee><id>5</id><name>Bernadette</name></employee><employee><id>6</id><name>Raj</name></employee><employee><id>7</id><name>Howard</name></employee><employee><id>8</id><name>Priya</name></employee></collection>
