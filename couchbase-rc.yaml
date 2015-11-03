@@ -15,4 +15,7 @@ spec:
       - name: couchbase-rc-pod
         image: couchbase/server
         ports:
-        - containerPort: 8080
+        - containerPort: 8091
+        - containerPort: 8092
+        - containerPort: 8093
+        - containerPort: 11210
