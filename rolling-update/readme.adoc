@@ -15,7 +15,7 @@ REVISION	CHANGE-CAUSE
 1		<none>
 2		<none>
 ```
-.. Using `kubectl appl` command
+.. Using `kubectl apply` command
 ... Edit the file, change the image name from `arungupta/wildfly-app:1` to `arungupta/wildfly-app:2`
 ... Apply the deployment: `kubectl.sh apply -f webapp-deployment.yml`
 ... Check the history of deployment: `kubectl.sh rollout history deployment webapp-deployment`. It shows the output:
