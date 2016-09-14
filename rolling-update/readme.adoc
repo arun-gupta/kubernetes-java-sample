@@ -1,5 +1,12 @@
 = Rolling Update in Kubernetes
 
+This document explains how to perform rolling updates using Kubernetes. The `kubectl rolling-update` command only works with Replication Controller. The `kubectl set` command can be used for Deployment.
+
+List of application images:
+
+. v1: `arungupta/wildfly-app:1` (uses green background)
+. v2: `arungupta/wildfly-app:2` (uses red background)
+
 == Using Replication Controller
 
 . Create RC: `kubectl.sh create -f webapp-rc.yml`
