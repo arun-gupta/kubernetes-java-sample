@@ -1,0 +1,17 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: webapp-deployment
+spec:
+  replicas: 4
+  template:
+    metadata:
+      labels:
+        app: webapp-pod
+    spec:
+      containers:
+      - name: webapp
+        image: arungupta/wildfly-app:1
+        ports:
+        - containerPort: 8080
+
