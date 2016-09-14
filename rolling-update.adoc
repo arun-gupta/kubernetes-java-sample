@@ -1,0 +1,30 @@
+= Rolling Update using Deployment in Kubernetes
+
+. Create a Deployment: `kubectl create -f webapp-deployment.yml`
+. Expose the Deployment as Service: `kubectl.sh expose deployment webapp-deployment --name=webapp-service --port=8080 --target-port=8080`
+. Start proxy: `kubectl proxy`
+. Access web application's main page at http://127.0.0.1:8001/api/v1/proxy/namespaces/default/services/webapp-service/app/index.jsp
+. Rolling update
+.. Using `kubectl set` command
+... `kubectl.sh set image deployment/webapp-deployment webapp=arungupta/wildfly-app:2`
+... Check history of deployment `kubectl.sh rollout history deployment webapp-deployment`
++
+```
+deployments "webapp-deployment":
+REVISION	CHANGE-CAUSE
+1		<none>
+2		<none>
+```
+.. Using `kubectl appl` command
+... Edit the file, change the image name from `arungupta/wildfly-app:1` to `arungupta/wildfly-app:2`
+... Apply the deployment: `kubectl.sh apply -f webapp-deployment.yml`
+... Check the history of deployment: `kubectl.sh rollout history deployment webapp-deployment`. It shows the output:
++
+```
+deployments "webapp-deployment":
+REVISION	CHANGE-CAUSE
+1		kubectl create -f webapp-deployment.yml --record
+2		kubectl apply -f webapp-deployment.yml
+```
+.. In either case, check the application's main page to see the updated background.
+
