@@ -52,6 +52,5 @@ REVISION	CHANGE-CAUSE
 
 == Cleanup
 
-. Delete service: `kubectl.sh delete service webapp-service`
-. Delete deployment: `kubectl.sh delete deployment webapp-deployment`
-. Delete RC: `kubectl.sh delete rc webapp-rc`
+. Delete resources: `kubectl.sh delete svc/webapp-service deployments/webapp-deployment rc/webapp-rc`
+
