@@ -1,4 +1,26 @@
-= Rolling Update using Deployment in Kubernetes
+= Rolling Update in Kubernetes
+
+== Using Replication Controller
+
+. Create RC: `kubectl.sh create -f webapp-rc.yml`
+. Exposes RC as Service: `kubectl.sh expose rc webapp-rc --name=webapp-service --port=8080 --target-port=8080`
+. Start proxy: `kubectl proxy`
+. Access web application's main page: http://127.0.0.1:8001/api/v1/proxy/namespaces/default/services/webapp-service/app/index.jsp
+. Rolling update using `kubectl.sh rolling-update webapp-rc --image=arungupta/wildfly-app:2` to see the output:
++
+```
+Created webapp-rc-5a11f15230716f6026c407eb9c1a60ca
+Scaling up webapp-rc-5a11f15230716f6026c407eb9c1a60ca from 0 to 2, scaling down webapp-rc from 2 to 0 (keep 2 pods available, don't exceed 3 pods)
+Scaling webapp-rc-5a11f15230716f6026c407eb9c1a60ca up to 1
+Scaling webapp-rc down to 1
+Scaling webapp-rc-5a11f15230716f6026c407eb9c1a60ca up to 2
+Scaling webapp-rc down to 0
+Update succeeded. Deleting old controller: webapp-rc
+Renaming webapp-rc-5a11f15230716f6026c407eb9c1a60ca to webapp-rc
+replicationcontroller "webapp-rc" rolling updated
+```
+
+== Using Deployment
 
 . Create a Deployment: `kubectl create -f webapp-deployment.yml`
 . Expose the Deployment as Service: `kubectl.sh expose deployment webapp-deployment --name=webapp-service --port=8080 --target-port=8080`
@@ -28,3 +50,8 @@ REVISION	CHANGE-CAUSE
 ```
 .. In either case, check the application's main page to see the updated background.
 
+== Cleanup
+
+. Delete service: `kubectl.sh delete service webapp-service`
+. Delete deployment: `kubectl.sh delete deployment webapp-deployment`
+. Delete RC: `kubectl.sh delete rc webapp-rc`
