@@ -5,15 +5,14 @@
 . Start Couchbase Docker container: `docker run -d --name db -p 8091-8094:8091-8094 -p 11210:11210 arungupta/oreilly-couchbase`
 . Run the application: `mvn -f webapp/pom.xml spring-boot:run`
 . Optionally
-.. Generate a fat jar: `mvn -f webapp/pom.xml clean package spring-boot:repackage`
-.. Run app (default host): `java -jar target/bootiful-couchbase.jar`
+.. Generate a fat jar: `mvn -f webapp/pom.xml clean package`
+.. Run app (default host): `mvn spring-boot:run` or `java -jar target/bootiful-couchbase.jar`
 .. Run app (explicit host): `java -Dspring.couchbase.bootstrap-hosts=localhost -jar target/bootiful-couchbase.jar`
-
 
 == Using Docker
 
 . Start Couchbase Docker container: `docker run -d --name db -p 8091-8094:8091-8094 -p 11210:11210 arungupta/oreilly-couchbase`
-. Ceate Docker image of the application: `mvn -f webapp/pom.xml clean package spring-boot:repackage docker:build`
+. Ceate Docker image of the application: `mvn -f webapp/pom.xml clean package`
 . Run the application: `docker run -it -e spring.couchbase.bootstrap-hosts=172.17.0.2 arungupta/bootiful-couchbase`
 
 == Using Kubernetes
