@@ -14,6 +14,7 @@
     </parent>
     <properties>
         <docker.image>arungupta/kubernetes-maven-sample</docker.image>
+        <java.version>1.8</java.version>
     </properties>
     <dependencies>
         <dependency>
