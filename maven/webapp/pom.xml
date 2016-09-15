@@ -22,19 +22,6 @@
             <artifactId>spring-boot-starter-data-couchbase</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-actuator</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>        
-        <dependency>
             <groupId>com.couchbase.client</groupId>
             <artifactId>java-client</artifactId>
         </dependency>
