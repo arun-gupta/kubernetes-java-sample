@@ -1,35 +1,32 @@
 package org.example.webapp;
 
-import com.couchbase.client.java.Bucket;
-import com.couchbase.client.java.document.JsonDocument;
-import com.couchbase.client.java.document.json.JsonObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
 
 /**
  * @arungupta
  */
 @SpringBootApplication
-public class Application {
+public class Application implements CommandLineRunner {
+    
+    @Autowired
+    private BookRepository repository;
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
 
-    @Bean
-    public CommandLineRunner commandLineRunner(Bucket bucket) {
-        return args -> {
-            JsonObject jsonObject = JsonObject.create();
-            jsonObject.put("isbn", "978-1-4919-1889-0");
-            jsonObject.put("name", "Minecraft Modding with Forge");
-            jsonObject.put("cost", "29.99");
-            JsonDocument document = JsonDocument.create("minecraft", jsonObject);
-            bucket.upsert(document);
-
-            JsonDocument doc = bucket.get("minecraft");
-            System.out.println(doc.content());
-        };
+    @Override
+    public void run(String... args) {
+//        repository.deleteAll();
+        
+        String isbn = "978-1-4919-1889-0";
+        
+        repository.save(new Book(isbn, "Minecraft Modding with Forge", "29.99"));
+        
+        Book book = repository.findByIsbn(isbn);
+        System.out.println("Book: " + book);
     }
 }
