@@ -20,8 +20,6 @@ public class Application implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-//        repository.deleteAll();
-        
         String isbn = "978-1-4919-1889-0";
         
         repository.save(new Book(isbn, "Minecraft Modding with Forge", "29.99"));
