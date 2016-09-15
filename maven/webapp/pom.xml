@@ -24,46 +24,45 @@
     </dependencies>
     <build>
         <finalName>kubernetes-maven-sample</finalName>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-maven-plugin</artifactId>
-                    <configuration>
-                        <mainClass>org.example.webapp.Application</mainClass>
-                        <layout>ZIP</layout>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <goals>
-                                <goal>repackage</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
-                    <groupId>io.fabric8</groupId>
-                    <artifactId>docker-maven-plugin</artifactId>
-                    <version>0.15.16</version>
-                    <configuration>
-                        <images>
-                            <image>
-                                <alias>sample</alias>
-                                <name>arungupta/kubernetes-maven-sample${project.version}</name>
-                                <build>
-                                    <from>openjdk</from>
-                                    <assembly>
-                                        <descriptorRef>artifact</descriptorRef>
-                                    </assembly>
-                                    <cmd>
-                                        <shell>java -jar /maven/${project.artifactId}.jar</shell>
-                                    </cmd>
-                                </build>
-                            </image>
-                        </images>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>org.example.webapp.Application</mainClass>
+                    <layout>ZIP</layout>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>io.fabric8</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>0.15.16</version>
+                <configuration>
+                    <images>
+                        <image>
+                            <alias>sample</alias>
+                            <name>arungupta/kubernetes-maven-sample:${project.version}</name>
+                            <build>
+                                <from>openjdk</from>
+                                <assembly>
+                                    <descriptorRef>artifact</descriptorRef>
+                                </assembly>
+                                <cmd>
+                                    <shell>java -jar /maven/${project.artifactId}.jar</shell>
+                                </cmd>
+                            </build>
+                            <run></run>
+                        </image>
+                    </images>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
 </project>
