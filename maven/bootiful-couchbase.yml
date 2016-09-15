@@ -9,5 +9,5 @@ spec:
   - name: bootiful-couchbase
     image: arungupta/bootiful-couchbase
     env:
-    - name: "spring.couchbase.bootstrap-hosts"
+    - name: COUCHBASE_URI
       value: couchbase-service
