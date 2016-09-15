@@ -25,6 +25,6 @@ public class Application implements CommandLineRunner {
         repository.save(new Book(isbn, "Minecraft Modding with Forge", "29.99"));
         
         Book book = repository.findByIsbn(isbn);
-        System.out.println("Book: " + book);
+        System.out.println(book);
     }
 }
