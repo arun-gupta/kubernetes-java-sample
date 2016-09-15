@@ -16,6 +16,10 @@
 . Ceate Docker image of the application: `mvn -f webapp/pom.xml clean package spring-boot:repackage docker:build`
 . Run the application: `docker run -it -e spring.couchbase.bootstrap-hosts=172.17.0.2 arungupta/bootiful-couchbase`
 
+== Using Kubernetes
+
+. Create Couchbase service: `kubectl.sh create -f couchbase-service.yml`
+. Run application: `kubectl.sh create -f bootiful-couchbase.yml`
 
 == Expected Output
 
