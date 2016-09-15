@@ -20,7 +20,7 @@ kind: ReplicationController
 metadata:
   name: couchbase-rc
 spec:
-  replicas: 2
+  replicas: 1
   template:
     metadata:
       labels:
