@@ -46,7 +46,6 @@
                 <configuration>
                     <images>
                         <image>
-                            <alias>sample</alias>
                             <name>arungupta/${project.artifactId}</name>
                             <build>
                                 <from>openjdk</from>
@@ -54,7 +53,7 @@
                                     <descriptorRef>artifact</descriptorRef>
                                 </assembly>
                                 <cmd>
-                                    <shell>java -jar /maven/${project.artifactId}.jar</shell>
+                                    <shell>java -D spring.couchbase.bootstrap-hosts=$COUCHBASE_URI -jar /maven/${project.artifactId}.jar</shell>
                                 </cmd>
                             </build>
                             <run></run>
