@@ -1,7 +1,7 @@
 = Spring Boot + Couchbase
 
 . Start Couchbase Docker container: `docker run -p 8091-8094:8091-8094 -p 11210:11210 arungupta/oreilly-couchbase`
-. Run the application: `mvn spring-boot:run`
+. Run the application: `mvn -f webapp/pom.xml spring-boot:run`
 . Look for output:
 +
 ```
@@ -10,5 +10,5 @@ Book{isbn=978-1-4919-1889-0, name=Minecraft Modding with Forge, cost=29.99}
 
 == Generate a fat jar
 
-. `mvn clean package spring-boot:repackage`
+. `mvn -f webapp/pom.xml clean package spring-boot:repackage`
 
