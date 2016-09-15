@@ -7,8 +7,5 @@
 ```
 Book{isbn=978-1-4919-1889-0, name=Minecraft Modding with Forge, cost=29.99}
 ```
-
-== Generate a fat jar
-
-. `mvn -f webapp/pom.xml clean package spring-boot:repackage`
-
+. Generate a fat jar: `mvn -f webapp/pom.xml clean package spring-boot:repackage` 
+. Generate a Docker image: `mvn -f webapp/pom.xml docker:build`
