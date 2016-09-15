@@ -5,8 +5,7 @@
 . Look for output:
 +
 ```
-2016-09-14 22:57:42.307  INFO 30093 --- [           main] s.b.c.e.t.TomcatEmbeddedServletContainer : Tomcat started on port(s): 8080 (http)
-{"name":"Minecraft Modding with Forge","cost":"29.99","isbn":"978-1-4919-1889-0"}
+Book{isbn=978-1-4919-1889-0, name=Minecraft Modding with Forge, cost=29.99}
 ```
 
 == Generate a fat jar
