@@ -1,4 +1,4 @@
-= Spring Boot + Couchbase
+= Spring Boot + Couchbase + Kubernetes
 
 == Using CLI
 
