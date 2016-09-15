@@ -1,0 +1,11 @@
+= Spring Boot + Couchbase
+
+. Start Couchbase Docker container: `docker run -p 8091-8094:8091-8094 -p 11210:11210 arungupta/oreilly-couchbase`
+. Run the application: `mvn spring-boot:run`
+. Look for output:
++
+```
+2016-09-14 22:57:42.307  INFO 30093 --- [           main] s.b.c.e.t.TomcatEmbeddedServletContainer : Tomcat started on port(s): 8080 (http)
+{"name":"Minecraft Modding with Forge","cost":"29.99","isbn":"978-1-4919-1889-0"}
+```
+
