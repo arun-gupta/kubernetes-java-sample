@@ -30,8 +30,6 @@ public class Application {
 
             JsonDocument doc = bucket.get("minecraft");
             System.out.println(doc.content());
-
-            System.out.println("Hello World!");
         };
     }
 }
