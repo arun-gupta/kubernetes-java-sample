@@ -9,3 +9,7 @@
 {"name":"Minecraft Modding with Forge","cost":"29.99","isbn":"978-1-4919-1889-0"}
 ```
 
+== Generate a fat jar
+
+. `mvn clean package spring-boot:repackage`
+
