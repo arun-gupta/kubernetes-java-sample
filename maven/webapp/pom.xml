@@ -44,10 +44,12 @@
           </execution>
         </executions>
       </plugin>
+
+      <!-- Not really needed : -->
       <plugin>
         <groupId>io.fabric8</groupId>
         <artifactId>docker-maven-plugin</artifactId>
-        <version>0.15.16</version>
+        <version>0.16.2</version>
         <configuration>
           <images>
             <image>
