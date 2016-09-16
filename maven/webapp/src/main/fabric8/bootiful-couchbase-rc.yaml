@@ -1,5 +1,8 @@
 spec:
-  containers:
-    env:
-    - name: COUCHBASE_URI
-      value: couchbase
+  template:
+    spec:
+      containers:
+      - imagePullPolicy: IfNotPresent
+        env:
+        - name: COUCHBASE_URI
+          value: couchbase
