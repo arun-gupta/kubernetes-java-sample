@@ -1,0 +1,16 @@
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: couchbase-rc-pod
+    spec:
+      containers:
+      - name: couchbase
+        image: arungupta/oreilly-couchbase
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8091
+        - containerPort: 8092
+        - containerPort: 8093
+        - containerPort: 11210
