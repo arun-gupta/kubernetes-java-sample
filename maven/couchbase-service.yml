@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Service
+metadata: 
+  name: couchbase-service
+spec: 
+  selector: 
+    app: couchbase-rc-pod
+  ports:
+    - name: admin
+      port: 8091
+    - name: views
+      port: 8092
+    - name: query
+      port: 8093
+    - name: memcached
+      port: 11210
+---
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: couchbase-rc
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: couchbase-rc-pod
+    spec:
+      containers:
+      - name: couchbase
+        image: arungupta/oreilly-couchbase
+        ports:
+        - containerPort: 8091
+        - containerPort: 8092
+        - containerPort: 8093
+        - containerPort: 11210
+
