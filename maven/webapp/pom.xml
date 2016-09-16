@@ -54,7 +54,7 @@
                                     <descriptorRef>artifact</descriptorRef>
                                 </assembly>
                                 <cmd>
-                                    <shell>java -D spring.couchbase.bootstrap-hosts=$COUCHBASE_URI -jar /maven/${project.artifactId}.jar</shell>
+                                    <shell>java -Dspring.couchbase.bootstrap-hosts=$COUCHBASE_URI -jar /maven/${project.artifactId}.jar</shell>
                                 </cmd>
                             </build>
                             <run></run>
@@ -63,9 +63,17 @@
                 </configuration>
                 <executions>
                     <execution>
+                        <id>package</id>
                         <phase>package</phase>
                         <goals>
                             <goal>build</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>push</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>push</goal>
                         </goals>
                     </execution>
                 </executions>
