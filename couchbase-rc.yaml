@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: couchbase-rc-pod
-        image: couchbase/server
+        image: arungupta/couchbase
         ports:
         - containerPort: 8091
         - containerPort: 8092
