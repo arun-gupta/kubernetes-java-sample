@@ -1,0 +1,12 @@
+spec:
+  selector:
+    app: couchbase-rc-pod
+  ports:
+    - name: admin
+      port: 8091
+    - name: views
+      port: 8092
+    - name: query
+      port: 8093
+    - name: memcached
+      port: 11210

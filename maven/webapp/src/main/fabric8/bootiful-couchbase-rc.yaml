@@ -1,0 +1,5 @@
+spec:
+  containers:
+    env:
+    - name: COUCHBASE_URI
+      value: couchbase
