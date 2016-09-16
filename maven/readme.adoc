@@ -17,6 +17,7 @@
 
 == Using Kubernetes
 
+. Start Kubernetes: `NUM_NODES=2 NODE_SIZE=m3.medium KUBERNETES_PROVIDER=aws kube-up.sh`
 . Create Couchbase service: `kubectl.sh create -f couchbase-service.yml`
 . Run application: `kubectl.sh create -f bootiful-couchbase.yml`
 
