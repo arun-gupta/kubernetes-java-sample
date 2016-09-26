@@ -10,9 +10,10 @@ List of application images:
 == Using Replication Controller
 
 . Create RC: `kubectl.sh create -f webapp-rc.yml`
+. Check pods: `kubectl.sh get -w pods`
 . Exposes RC as Service: `kubectl.sh expose rc webapp-rc --name=webapp-service --port=8080 --target-port=8080`
-. Start proxy: `kubectl proxy`
-. Access web application's main page: http://127.0.0.1:8001/api/v1/proxy/namespaces/default/services/webapp-service/app/index.jsp
+. Start proxy: `kubectl.sh proxy`
+. Access web application's main page http://127.0.0.1:8001/api/v1/proxy/namespaces/default/services/webapp-service/app/index.jsp and check for green background.
 . Rolling update using `kubectl.sh rolling-update webapp-rc --image=arungupta/wildfly-app:2` to see the output:
 +
 ```
@@ -26,6 +27,8 @@ Update succeeded. Deleting old controller: webapp-rc
 Renaming webapp-rc-5a11f15230716f6026c407eb9c1a60ca to webapp-rc
 replicationcontroller "webapp-rc" rolling updated
 ```
+. Access web application's main page http://127.0.0.1:8001/api/v1/proxy/namespaces/default/services/webapp-service/app/index.jsp and check for red background.
+
 
 == Using Deployment
 
