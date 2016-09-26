@@ -1,4 +1,4 @@
-= Kubernetes Demo Script
+= Kubernetes for Java Developers
 
 == Getting Started
 
@@ -49,10 +49,22 @@
 . Create Service: `kubectl.sh create -f wildfly-service.yaml`
 . Get RC, Service and Pods: `kubectl.sh get rc,service,pods`
 . Describe service: `kubectl.sh describe service wildfly-service`
-. Access WildFly landing page
-.. Get the value of `LoadBalancer Ingress`, access the WildFly landing page at `<IP>:8080`
-. Start proxy: `kubectl.sh proxy`
+. Get the value of `LoadBalancer Ingress`, access the WildFly landing page at `<IP>:8080`
 . Delete multiple resources: `kubectl.sh delete rc/wildfly-rc service/wildfly-service`
+
+== Using Maven (Service + Replication Controller + Client Pod)
+
+All code in `maven` directory
+
+. Create Couchbase service: `kubectl.sh create -f couchbase-service.yml`
+. Check status: `kubectl.sh get -w pods`
+. Run application: `kubectl.sh create -f bootiful-couchbase.yml`
+. Check status: `kubectl.sh get -w pods`
+. Check logs: `kubectl.sh logs -f bootiful-couchbase` to show the output `Book{isbn=978-1-4919-1889-0, name=Minecraft Modding with Forge, cost=29.99}`
+
+== Rolling Updates
+
+https://github.com/arun-gupta/kubernetes-java-sample/tree/master/rolling-update
 
 == Namespaces
 
