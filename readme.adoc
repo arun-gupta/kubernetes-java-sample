@@ -16,7 +16,7 @@
 .. Creates a Deployment or Job
 . Check status: `kubectl.sh get -w pods`
 .. Show the pod name derived from the Deployment name
-. Describe pod: `kubectl.sh describe pod <name>` or `kubectl.sh describe pod/<name>`
+. Describe pod: `kubectl.sh describe pod <pod-name>` or `kubectl.sh describe pod/<pod-name>`
 . Get logs: `kubectl.sh logs <pod-name>`
 .. Use `-f` to tail logs
 . Get deployments: `kubectl.sh get deployments`
@@ -54,7 +54,7 @@
 
 == Using Maven (Service + Replication Controller + Client Pod)
 
-All code in `maven` directory
+All the code is in `maven` directory:
 
 . Create Couchbase service: `kubectl.sh create -f couchbase-service.yml`
 . Check status: `kubectl.sh get -w pods`
@@ -68,8 +68,16 @@ https://github.com/arun-gupta/kubernetes-java-sample/tree/master/rolling-update
 
 == Namespaces
 
-. Show pods in all namespaces: `kubectl.sh get pods --all-namespaces`
+. Create a new namespace: `kubectl.sh create -f dev-namespace.yaml`
+. Get namespaces: `kubectl.sh get namespace`
+. Create a new deployment in the namespace: `kubectl.sh --namespace=development run couchbase --image=arungupta/couchbase`
+. List deployments: `kubectl.sh get deployments`
+.. No deployments shown
+. List all resources in the namespace: `kubectl.sh get deployments --namespace=development`
+. List all resources in all namespaces: `kubectl.sh get deployments --all-namespaces`
+. Show pods in the namespaces: `kubectl.sh get pods --all-namespaces`
 
 === Tips
 
 . Create resources in all `.json`, `.yaml` and `.yml` files in dir: `kubectl.sh create -f ./dir`
+
