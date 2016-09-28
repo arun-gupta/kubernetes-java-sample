@@ -7,7 +7,6 @@ toc::[]
 
 This project shows different recipes to run a Java EE application using Kubernetes.
 
-
 == Kubernetes Concepts
 
 Key concepts of Kubernetes are explained below:
@@ -27,42 +26,35 @@ image::images/kubernetes-architecture.png[]
 == Initial setup
 
 . Download Kubernetes from
-  https://github.com/kubernetes/kubernetes/releases/download/v1.0.1/kubernetes.tar.gz
-  and extract.
-. Start Kubernetes using Vagrant
+  https://github.com/kubernetes/kubernetes/releases/download/v1.4.0/kubernetes.tar.gz and extract.
+. Include `kubernetes/cluster` in `PATH`.
+. Start Kubernetes using Amazon Web Services:
 
-  cd kubernetes
-  export KUBERNETES_PROVIDER=vagrant
-  cluster/kube-up.sh
+  NUM_NODES=2 NODE_SIZE=m3.medium KUBERNETES_PROVIDER=aws kube-up.sh
 
-.Kubernetes Cluster using Vagrant
-image::images/kubernetes-cluster-vagrant.png[]
-
-Detailed instructions:
-https://github.com/kubernetes/kubernetes/blob/master/docs/getting-started-guides/vagrant.md
+Detailed instructions: http://kubernetes.io/docs/getting-started-guides/aws/
 
 == A Pod with One Container
 
 This section will explain how to start a Pod with one Container. WildFly base Docker image will be used as the Container.
 
-.A Pod with One Container
-image::images/kubernetes-one-pod.png[]
-
 . Start a Pod with WildFly container:
-
-  kubernetes> ./cluster/kubectl.sh create -f ~/workspaces/kubernetes-java-sample/wildfly-pod.yaml
-
-
++
+[source, text]
+----
+kubectl.sh create -f wildfly-pod.yaml
+pod "wildfly-pod" created
+----
++
 . Get status of the Pod:
 +
 [source, text]
 ----
-kubernetes> ./cluster/kubectl.sh get -w po
+kubectl.sh get -w po
+NAME          READY     STATUS              RESTARTS   AGE
+wildfly-pod   0/1       ContainerCreating   0          6s
 NAME          READY     STATUS    RESTARTS   AGE
-wildfly-pod   0/1       Pending   0          4s
-wildfly-pod   0/1       Running   0          10s
-NAME          READY     STATUS    RESTARTS   AGE
-wildfly-pod   1/1       Running   0          10s
+wildfly-pod   1/1       Running   0          34s
 ----
 +
 NOTE: Make sure to wait for the status to change to Running.
@@ -71,53 +63,56 @@ NOTE: Make sure to wait for the status to change to Running.
 +
 [source, text]
 ----
-kubernetes> ./cluster/kubectl.sh describe po wildfly-pod
-Name:				wildfly-pod
-Namespace:			default
-Image(s):			jboss/wildfly
-Node:				10.245.1.3/10.245.1.3
-Labels:				name=wildfly
-Status:				Running
-Reason:				
-Message:			
-IP:				10.246.1.15
-Replication Controllers:	<none>
+kubectl.sh describe po wildfly-pod
+Name:   wildfly-pod
+Namespace:  default
+Node:   ip-172-20-0-111.us-west-2.compute.internal/172.20.0.111
+Start Time: Wed, 28 Sep 2016 15:38:02 -0700
+Labels:   name=wildfly
+Status:   Running
+IP:   10.244.2.4
+Controllers:  <none>
 Containers:
   wildfly-pod:
-    Image:	jboss/wildfly
-    Limits:
-      cpu:		100m
-    State:		Running
-      Started:		Tue, 14 Jul 2015 14:32:06 -0700
-    Ready:		True
-    Restart Count:	0
+    Container ID: docker://cfba313f7ec2c85c3ec7ff62c529973a2042aeaa1ae07026eb98c503442d2953
+    Image:    jboss/wildfly
+    Image ID:   docker://sha256:4c99bd2cd264d8a1b4b68816736650ca0c3555726c482a16a43cddc4c61df99c
+    Port:   8080/TCP
+    Requests:
+      cpu:    100m
+    State:    Running
+      Started:    Wed, 28 Sep 2016 15:38:35 -0700
+    Ready:    True
+    Restart Count:  0
+    Volume Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from default-token-4e59z (ro)
+    Environment Variables:  <none>
 Conditions:
-  Type		Status
-  Ready 	True 
+  Type    Status
+  Initialized   True 
+  Ready   True 
+  PodScheduled  True 
+Volumes:
+  default-token-4e59z:
+    Type: Secret (a volume populated by a Secret)
+    SecretName: default-token-4e59z
+QoS Class:  Burstable
+Tolerations:  <none>
 Events:
-  FirstSeen				LastSeen			Count	From			SubobjectPath		Reason		Message
-  Tue, 14 Jul 2015 14:32:04 -0700	Tue, 14 Jul 2015 14:32:04 -0700	1	{scheduler }					scheduled	Successfully assigned wildfly-pod to 10.245.1.3
-  Tue, 14 Jul 2015 14:32:04 -0700	Tue, 14 Jul 2015 14:32:04 -0700	1	{kubelet 10.245.1.3}	implicitly required container POD	pulled		Pod container image "gcr.io/google_containers/pause:0.8.0" already present on machine
-  Tue, 14 Jul 2015 14:32:05 -0700	Tue, 14 Jul 2015 14:32:05 -0700	1	{kubelet 10.245.1.3}	implicitly required container POD	created		Created with docker id 39722cdb6e81
-  Tue, 14 Jul 2015 14:32:05 -0700	Tue, 14 Jul 2015 14:32:05 -0700	1	{kubelet 10.245.1.3}	implicitly required container POD	started		Started with docker id 39722cdb6e81
-  Tue, 14 Jul 2015 14:32:06 -0700	Tue, 14 Jul 2015 14:32:06 -0700	1	{kubelet 10.245.1.3}	spec.containers{wildfly-pod}		created		Created with docker id dd410c76c15a
-  Tue, 14 Jul 2015 14:32:06 -0700	Tue, 14 Jul 2015 14:32:06 -0700	1	{kubelet 10.245.1.3}	spec.containers{wildfly-pod}		started		Started with docker id dd410c76c15a
-----
-+
-NOTE: IP address of the Pod is shown as 10.246.1.15.
-+
-Only the IP address can be obtained as:
-+
-[source, text]
-----
-kubernetes> ./cluster/kubectl.sh get -o template po wildfly-pod --template={{.status.podIP}}
+  FirstSeen LastSeen  Count From              SubobjectPath     Type    Reason    Message
+  --------- --------  ----- ----              -------------     --------  ------    -------
+  4m    4m    1 {default-scheduler }            Normal    Scheduled Successfully assigned wildfly-pod to ip-172-20-0-111.us-west-2.compute.internal
+  4m    4m    1 {kubelet ip-172-20-0-111.us-west-2.compute.internal}  spec.containers{wildfly-pod}  Normal    Pulling   pulling image "jboss/wildfly"
+  3m    3m    1 {kubelet ip-172-20-0-111.us-west-2.compute.internal}  spec.containers{wildfly-pod}  Normal    Pulled    Successfully pulled image "jboss/wildfly"
+  3m    3m    1 {kubelet ip-172-20-0-111.us-west-2.compute.internal}  spec.containers{wildfly-pod}  Normal    Created   Created container with docker id cfba313f7ec2; Security:[seccomp=unconfined]
+  3m    3m    1 {kubelet ip-172-20-0-111.us-west-2.compute.internal}  spec.containers{wildfly-pod}  Normal    Started   Started container with docker id cfba313f7ec2
 ----
 +
 . Check logs of the Pod:
 +
 [source, text]
 ----
-kubernetes> ./cluster/kubectl.sh logs wildfly-pod
+kubectl.sh logs wildfly-pod
 =========================================================================
 
   JBoss Bootstrap Environment
@@ -126,82 +121,54 @@ kubernetes> ./cluster/kubectl.sh logs wildfly-pod
 
   JAVA: /usr/lib/jvm/java/bin/java
 
-  JAVA_OPTS:  -server -XX:+UseCompressedOops  -server -XX:+UseCompressedOops -Xms64m -Xmx512m -XX:MaxPermSize=256m -Djava.net.preferIPv4Stack=true -Djboss.modules.system.pkgs=org.jboss.byteman -Djava.awt.headless=true
+  JAVA_OPTS:  -server -Xms64m -Xmx512m -XX:MetaspaceSize=96M -XX:MaxMetaspaceSize=256m -Djava.net.preferIPv4Stack=true -Djboss.modules.system.pkgs=org.jboss.byteman -Djava.awt.headless=true
 
 =========================================================================
 
-OpenJDK 64-Bit Server VM warning: ignoring option MaxPermSize=256m; support was removed in 8.0
-21:32:07,636 INFO  [org.jboss.modules] (main) JBoss Modules version 1.4.3.Final
-21:32:07,944 INFO  [org.jboss.msc] (main) JBoss MSC version 1.2.6.Final
-21:32:08,045 INFO  [org.jboss.as] (MSC service thread 1-7) WFLYSRV0049: WildFly Full 9.0.0.Final (WildFly Core 1.0.0.Final) starting
+22:38:35,844 INFO  [org.jboss.modules] (main) JBoss Modules version 1.5.2.Final
+22:38:36,209 INFO  [org.jboss.msc] (main) JBoss MSC version 1.2.6.Final
+22:38:36,295 INFO  [org.jboss.as] (MSC service thread 1-2) WFLYSRV0049: WildFly Full 10.1.0.Final (WildFly Core 2.2.0.Final) starting
+22:38:38,367 INFO  [org.jboss.as.server] (Controller Boot Thread) WFLYSRV0039: Creating http management service using socket-binding (management-http)
+22:38:38,388 INFO  [org.xnio] (MSC service thread 1-1) XNIO version 3.4.0.Final
 
 . . .
 
-21:32:10,548 INFO  [org.jboss.as] (Controller Boot Thread) WFLYSRV0060: Http management interface listening on http://127.0.0.1:9990/management
-21:32:10,548 INFO  [org.jboss.as] (Controller Boot Thread) WFLYSRV0051: Admin console listening on http://127.0.0.1:9990
-21:32:10,549 INFO  [org.jboss.as] (Controller Boot Thread) WFLYSRV0025: WildFly Full 9.0.0.Final (WildFly Core 1.0.0.Final) started in 3386ms - Started 203 of 379 services (210 services are lazy, passive or on-demand)
-----
-. Pod's IP is accessible only inside the cluster. To access the WildFly server running in the Pod, login to the minion:
-+
-[source, text]
-----
-kubernetes> vagrant ssh minion-1
-Last login: Tue Jul 14 21:29:24 2015 from 10.0.2.2
-[vagrant@kubernetes-minion-1 ~]$ 
-----
-+
-And check that WildFly container running inside the Pod is accessible:
-+
-[source, text]
-----
-[vagrant@kubernetes-minion-1 ~]$ curl http://10.246.1.15:8080
-<!--
-  ~ JBoss, Home of Professional Open Source.
-  ~ Copyright (c) 2014, Red Hat, Inc., and individual contributors
-
-. . .
-
-    </div>
-</div>
-</body>
-</html>
-
+22:38:40,788 INFO  [org.wildfly.extension.undertow] (MSC service thread 1-2) WFLYUT0006: Undertow HTTPS listener https listening on 0.0.0.0:8443
+22:38:40,905 INFO  [org.jboss.ws.common.management] (MSC service thread 1-2) JBWS022052: Starting JBossWS 5.1.5.Final (Apache CXF 3.1.6) 
+22:38:41,195 INFO  [org.jboss.as] (Controller Boot Thread) WFLYSRV0060: Http management interface listening on http://127.0.0.1:9990/management
+22:38:41,197 INFO  [org.jboss.as] (Controller Boot Thread) WFLYSRV0051: Admin console listening on http://127.0.0.1:9990
+22:38:41,197 INFO  [org.jboss.as] (Controller Boot Thread) WFLYSRV0025: WildFly Full 10.1.0.Final (WildFly Core 2.2.0.Final) started in 5888ms - Started 331 of 577 services (393 services are lazy, passive or on-demand)
 ----
 +
 . Delete the Pod:
++
+[source, text]
+----
+kubectl.sh delete -f wildfly-pod.yaml
+pod "wildfly-pod" deleted
+----
 
-  kubernetes> ./cluster/kubectl.sh delete -f ~/workspaces/kubernetes-java-sample/wildfly-pod.yaml
-
-== A Replication Controller with Two Replicas of a Pod (WildFly)
+== A Replication Controller with Two Replicas of a Pod
 
 This section will explain how to start a https://github.com/kubernetes/kubernetes/blob/master/docs/user-guide/replication-controller.md[Replication Controller] with two replicas of a Pod. Each Pod will have one WildFly container.
-
-.Kubernetes Replication Controller
-image::images/kubernetes-rc.png[]
 
 . Start a Replication Controller that has two replicas of a pod, each with a WildFly container:
 +
 [source, text]
 ----
-kubernetes> ./cluster/kubectl.sh create -f ~/workspaces/kubernetes-java-sample/wildfly-rc.yaml 
+kubectl.sh create -f wildfly-rc.yaml
 ----
 . Get status of the Pods:
 +
 [source, text]
 ----
-kubernetes> ./cluster/kubectl.sh get -w po
-NAME      READY     STATUS    RESTARTS   AGE
+kubectl.sh get -w po
+NAME               READY     STATUS              RESTARTS   AGE
+wildfly-rc-iv1o6   0/1       ContainerCreating   0          3s
+wildfly-rc-lbcyq   0/1       ContainerCreating   0          3s
 NAME               READY     STATUS    RESTARTS   AGE
-wildfly-rc-bgtkg   0/1       Pending   0          1s
-wildfly-rc-l8fqv   0/1       Pending   0         1s
-wildfly-rc-bgtkg   0/1       Pending   0         1s
-wildfly-rc-l8fqv   0/1       Pending   0         1s
-wildfly-rc-bgtkg   0/1       Pending   0         1s
-wildfly-rc-l8fqv   0/1       Pending   0         1s
-wildfly-rc-bgtkg   0/1       Running   0         1m
-wildfly-rc-l8fqv   0/1       Running   0         1m
-wildfly-rc-bgtkg   1/1       Running   0         1m
-wildfly-rc-l8fqv   1/1       Running   0         1m
+wildfly-rc-iv1o6   1/1       Running   0          3s
+wildfly-rc-lbcyq   1/1       Running   0         36s
 ----
 +
 NOTE: Make sure to wait for the status to change to Running.
@@ -212,151 +179,123 @@ Note down name of the Pods as "`wildfly-rc-bgtkg`" and "`wildfly-rc-l8fqv`".
 +
 [source, text]
 ----
-kubernetes> ./cluster/kubectl.sh get rc
-CONTROLLER   CONTAINER(S)     IMAGE(S)        SELECTOR       REPLICAS
-wildfly-rc   wildfly-rc-pod   jboss/wildfly   name=wildfly   2
+kubectl.sh get rc
+NAME         DESIRED   CURRENT   READY     AGE
+wildfly-rc   2         2         2         55s
 ----
 +
 If multiple Replication Controllers are running then you can query for this specific one using the label:
 +
 [source, text]
 ----
-kubernetes> ./cluster/kubectl.sh get rc -l name=wildfly
-CONTROLLER   CONTAINER(S)     IMAGE(S)        SELECTOR       REPLICAS
-wildfly-rc   wildfly-rc-pod   jboss/wildfly   name=wildfly   2
-----
-+
-. Find IP address of each Pod (using the name):
-+
-[source, text]
-----
-kubernetes> ./cluster/kubectl.sh get -o template po wildfly-rc-bgtkg --template={{.status.podIP}}
-10.246.1.5
-----
-+
-Find IP address of the other Pod:
-+
-[source, text]
-----
-kubernetes> ./cluster/kubectl.sh get -o template po wildfly-rc-l8fqv --template={{.status.podIP}}
-10.246.1.4
-----
-+
-. As mentioned earlier, Pod's IP address is accessible only inside the cluster. Login to the minion to access WildFly's main page hosted by the containers:
-+
-[source, text]
-----
-kubernetes> vagrant ssh minion-1
-Last login: Wed Jul 15 20:39:23 2015 from 10.0.2.2
-[vagrant@kubernetes-minion-1 ~]$ curl http://10.246.1.4:8080/
-<!--
-  ~ JBoss, Home of Professional Open Source.
-
-. . .
-
-</div>
-</body>
-</html>
-[vagrant@kubernetes-minion-1 ~]$ curl http://10.246.1.5:8080/
-<!--
-  ~ JBoss, Home of Professional Open Source.
-
-. . .
-
-</div>
-</body>
-</html>
+kubectl.sh get rc -l name=wildfly
+NAME         DESIRED   CURRENT   READY     AGE
+wildfly-rc   2         2         2         1m
 ----
 
 === Rescheduling Pods
 
 Replication Controller ensures that specified number of pod "`replicas`" are running at any one time. If there are too many, the replication controller kills some pods. If there are too few, it starts more.
 
-.Rescheduling Pods in Kubernetes
-image::images/kubernetes-pod-rescheduling.png[]
+Lets start a Replication Controller with two replicas of a pod. Delete a Pod and see how a new Pod is automatically rescheduled.
 
-Lets start a Replication Controller with a couple of Pods. Delete a Pod and see how a new Pod is automatically rescheduled.
-
+. Get pods:
++
 [source, text]
 ----
-kubernetes> ./cluster/kubectl.sh delete po wildfly-rc-l8fqv
-pods/wildfly-rc-l8fqv
+kubectl.sh get pods
+NAME               READY     STATUS    RESTARTS   AGE
+wildfly-rc-iv1o6   1/1       Running   0          2m
+wildfly-rc-lbcyq   1/1       Running   0          2m
 ----
-
-Status of the Pods can be seen in another shell:
-
++
+. Delete a pod:
++
 [source, text]
 ----
-kubernetes> ./cluster/kubectl.sh get -w po
-NAME               READY     STATUS    RESTARTS   AGE
-wildfly-rc-bgtkg   1/1       Running   0          2m
-wildfly-rc-l8fqv   1/1       Running   0          2m
-NAME               READY     STATUS    RESTARTS   AGE
-wildfly-rc-l8fqv   1/1       Running   0          3m
-wildfly-rc-xz6wu   0/1       Pending   0         2s
-wildfly-rc-xz6wu   0/1       Pending   0         2s
-wildfly-rc-xz6wu   0/1       Pending   0         12s
-wildfly-rc-xz6wu   0/1       Running   0         14s
-wildfly-rc-xz6wu   1/1       Running   0         22s
+kubectl.sh delete pod/wildfly-rc-iv1o6
+pod "wildfly-rc-iv1o6" deleted
 ----
-
-Notice how Pod with name "`wildfly-rc-bgtkg`" was deleted and a new Pod with the name "`wildfly-rc-xz6wu`" was created.
++
+. Get pods:
++
+[source, text]
+----
+kubectl.sh get pods
+NAME               READY     STATUS    RESTARTS   AGE
+wildfly-rc-lbcyq   1/1       Running   0          3m
+wildfly-rc-z3wg3   1/1       Running   0          6s
+----
++
+See a new pod is now created.
 
 === Scaling Pods
 
 Replication Controller allows dynamic scaling up and down of Pods.
 
-.Scaling Pods in Kubernetes
-image::images/kubernetes-scaling-pods.png[]
-
 . Scale up the number of Pods:
 +
 [source, text]
 ----
-kubernetes> ./cluster/kubectl.sh scale --replicas=3 rc wildfly-rc
+kubectl.sh scale --replicas=3 rc wildfly-rc
 scaled
 ----
 +
-. Status of the Pods can be seen in another shell:
+. Check pods:
 +
 [source, text]
 ----
-kubernetes> ./cluster/kubectl.sh get -w po
+kubectl.sh get -w pods
+NAME               READY     STATUS              RESTARTS   AGE
+wildfly-rc-htfj2   1/1       Running             0          1m
+wildfly-rc-oq97h   0/1       ContainerCreating   0          26s
+wildfly-rc-z3wg3   1/1       Running             0          3m
 NAME               READY     STATUS    RESTARTS   AGE
-wildfly-rc-bgtkg   1/1       Running   0          3m
-wildfly-rc-xz6wu   1/1       Running   0          38s
-NAME               READY     STATUS    RESTARTS   AGE
-wildfly-rc-bymu7   0/1       Pending   0          2s
-wildfly-rc-bymu7   0/1       Pending   0         2s
-wildfly-rc-bymu7   0/1       Pending   0         2s
-wildfly-rc-bymu7   0/1       Running   0         3s
-wildfly-rc-bymu7   1/1       Running   0         12s
+wildfly-rc-oq97h   1/1       Running   0          41s
 ----
 +
-Notice a new Pod with the name "`wildfly-rc-bymu7`" is created.
+Notice a new Pod with the name "`wildfly-rc-oq97h`" is created.
++
+. Check RC:
++
+[source, text]
+----
+kubectl.sh get rc
+NAME         DESIRED   CURRENT   READY     AGE
+wildfly-rc   3         3         3         7m
+----
 +
 . Scale down the number of Pods:
 +
 [source, text]
 ----
-kubernetes> ./cluster/kubectl.sh scale --replicas=1 rc wildfly-rc
+kubectl.sh scale --replicas=1 rc wildfly-rc
 scaled
 ----
 +
-. Status of the Pods using `-w` is not shown correctly https://github.com/kubernetes/kubernetes/issues/11338[#11338]. But status of the Pods can be seen correctly as:
+. Check RC:
 +
 [source, text]
 ----
-kubernetes> ./cluster/kubectl.sh get po
+kubectl.sh get rc
+NAME         DESIRED   CURRENT   READY     AGE
+wildfly-rc   1         1         1         8m
+----
++
+. Check pods:
++
+[source, text]
+----
+kubectl.sh get pods
 NAME               READY     STATUS    RESTARTS   AGE
-wildfly-rc-bgtkg   1/1       Running   0          9m
+wildfly-rc-z3wg3   1/1       Running   0          5m
 ----
 +
 Notice only one Pod is running now.
 
 === Rolling Updates
 
-PR for https://github.com/arun-gupta/kubernetes-java-sample/issues/1
+https://github.com/arun-gupta/kubernetes-java-sample/tree/master/rolling-update
 
 === Multiple Release Tracks
 
@@ -368,15 +307,13 @@ Finally, delete the Replication Controller:
 
 [source, text]
 ----
-kubernetes> ./cluster/kubectl.sh delete -f ~/workspaces/kubernetes-java-sample/wildfly-rc.yaml
+kubectl.sh delete -f wildfly-rc.yaml
+replicationcontroller "wildfly-rc" deleted
 ----
 
 == Java EE Application deployed in a Pod with one Container (WildFly + H2 in-memory database)
 
 This section will show how to deploy a Java EE application in a Pod with one Container. WildFly, with an in-memory H2 database, will be used as the container.
-
-.Java EE Application in Kubernetes
-image::images/javaee7-hol.png[]
 
 . Create Java EE 7 sample application Replication Controller:
 +
