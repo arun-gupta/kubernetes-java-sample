@@ -8,3 +8,10 @@ spec:
   containers: 
     - image: jboss/wildfly
       name: wildfly-pod
+      resources:
+        requests:
+          memory: 1G
+          cpu: 1
+        limits:
+          memory: 2G
+          cpu: 2
