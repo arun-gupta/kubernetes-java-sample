@@ -41,8 +41,10 @@
 . Get RC: `kubectl.sh get rc`
 . Get pods: `kubectl.sh get pods`
 .. Show pod names
+.. Show image id downloaded on the second host
 . Get pods created by RC: `kubectl.sh describe pods wildfly-rc`
 . Get pods with a specified label: `kubectl.sh get pods -l name=wildfly`
+. Delete RC: `kubectl.sh delete rc wildfly-rc`
 
 === Service
 
@@ -60,9 +62,12 @@ All the code is in `maven` directory:
 . Check status: `kubectl.sh get -w pods`
 . Run application: `kubectl.sh create -f bootiful-couchbase.yml`
 . Check status: `kubectl.sh get -w pods`
+.. Show `ContainerCreating`
 . Check logs: `kubectl.sh logs -f bootiful-couchbase` to show the output `Book{isbn=978-1-4919-1889-0, name=Minecraft Modding with Forge, cost=29.99}`
 
 == Rolling Updates
+
+All code in `rolling-update` directory:
 
 https://github.com/arun-gupta/kubernetes-java-sample/tree/master/rolling-update
 
@@ -88,7 +93,7 @@ https://github.com/arun-gupta/kubernetes-java-sample/tree/master/rolling-update
 . Create a job: `kubectl.sh create -f runonce-job.yaml`
 . Check jobs: `kubectl.sh get jobs`
 . More details about job: `kubectl.sh describe jobs wait`
-. Check pods: `kubectl.get pods`
+. Check pods: `kubectl.sh get pods`
 . Show all completed pods: `kubectl.sh get pods --show-all`
 
 == Couchbase Cluster
