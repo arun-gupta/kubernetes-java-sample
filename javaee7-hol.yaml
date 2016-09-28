@@ -18,4 +18,3 @@ spec:
         image: arungupta/javaee7-hol
         ports:
         - containerPort: 8080
-          hostPort: 8080
