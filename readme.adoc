@@ -77,6 +77,24 @@ https://github.com/arun-gupta/kubernetes-java-sample/tree/master/rolling-update
 . List all resources in all namespaces: `kubectl.sh get deployments --all-namespaces`
 . Show pods in the namespaces: `kubectl.sh get pods --all-namespaces`
 
+== Quota
+
+. Create a constrained resource: `kubectl.sh create -f quota-wildfly.yaml`
+. Check for pods: `kubectl.sh get -w pods`
+. TBD
+
+== Run-once/Batch Jobs
+
+. Create a job: `kubectl.sh create -f runonce-job.yaml`
+. Check jobs: `kubectl.sh get jobs`
+. More details about job: `kubectl.sh describe jobs wait`
+. Check pods: `kubectl.get pods`
+. Show all completed pods: `kubectl.sh get pods --show-all`
+
+== Couchbase Cluster
+
+https://github.com/arun-gupta/couchbase-kubernetes/tree/master/cluster
+
 === Tips
 
 . Create resources in all `.json`, `.yaml` and `.yml` files in dir: `kubectl.sh create -f ./dir`
