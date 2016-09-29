@@ -25,14 +25,27 @@ image::images/kubernetes-architecture.png[]
 
 == Initial setup
 
-. Download Kubernetes from
-  https://github.com/kubernetes/kubernetes/releases/download/v1.4.0/kubernetes.tar.gz and extract.
+=== Have a Amazon Web Services account?
+
+. Download Kubernetes from https://github.com/kubernetes/kubernetes/releases/download/v1.4.0/kubernetes.tar.gz and extract.
 . Include `kubernetes/cluster` in `PATH`.
-. Start Kubernetes using Amazon Web Services:
-
+. Start Kubernetes cluster:
++
   NUM_NODES=2 NODE_SIZE=m3.medium KUBERNETES_PROVIDER=aws kube-up.sh
-
++
 Detailed instructions: http://kubernetes.io/docs/getting-started-guides/aws/
+
+=== Do not have a Amazon Web Services account
+
+. Download https://github.com/kubernetes/minikube/releases[latest minikube release]
+. Download http://kubernetes.io/docs/getting-started-guides/minikube/#install-kubectl[latest kubectl]
+. Rename `kubectl` to `kubectl.sh` for consistent name of commands.
+. Move both binaries in the same directory and include that directory in `PATH`.
+. Start Kubernetes one node cluster:
++
+  minikube start
++
+Detailed instructions: http://kubernetes.io/docs/getting-started-guides/minikube/
 
 == A Pod with One Container
 
