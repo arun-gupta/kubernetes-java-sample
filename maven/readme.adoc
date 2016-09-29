@@ -23,7 +23,7 @@
 . Create Couchbase service: `kubectl.sh create -f couchbase-service.yml`
 . Run application: `kubectl.sh create -f bootiful-couchbase.yml`
 
-=== Expected flow
+=== Expected flow (with maven plugin)
 
 . Create Kubernetes artifacts for service + RC for `arungupta/oreilly-couchbase` - How can the name of this service be customized to be "`couchbase`"? This is used in `bootiful-couchbase.yml`.
 . Create Kubernetes artifacts for `arungupta/bootiful-couchbase`
