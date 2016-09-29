@@ -319,20 +319,19 @@ This section will show how to deploy a Java EE application in a Pod with one Con
 +
 [source, text]
 ----
-kubernetes> ./cluster/kubectl.sh create -f ~/workspaces/kubernetes-java-sample/javaee7-hol.yaml
-replicationcontrollers/javaee7-hol
+kubectl.sh create -f javaee7-hol.yaml
+replicationcontroller "javaee7-hol" created
 ----
 +
 . Get status of the Pod:
 +
 [source, text]
 ----
-kubernetes> ./cluster/kubectl.sh get -w po
+kubectl.sh get -w po
+NAME                READY     STATUS              RESTARTS   AGE
+javaee7-hol-09ups   0/1       ContainerCreating   0          13s
 NAME                READY     STATUS    RESTARTS   AGE
-javaee7-hol-kt6bw   0/1       Pending   0          3s
-javaee7-hol-kt6bw   0/1       Pending   0          5s
-javaee7-hol-kt6bw   0/1       Running   0         7s
-javaee7-hol-kt6bw   1/1       Running   0         15s
+javaee7-hol-09ups   1/1       Running   0          36s
 ----
 +
 NOTE: Make sure to wait for the status to change to Running.
@@ -341,99 +340,98 @@ NOTE: Make sure to wait for the status to change to Running.
 +
 [source, text]
 ----
-kubernetes> ./cluster/kubectl.sh get rc
-CONTROLLER    CONTAINER(S)   IMAGE(S)                SELECTOR           REPLICAS
-javaee7-hol   master         arungupta/javaee7-hol   name=javaee7-hol   1
+kubectl.sh get rc
+NAME          DESIRED   CURRENT   READY     AGE
+javaee7-hol   1         1         1         11s
 ----
 +
-. Find IP address of the pod as:
-+
-[source, text]
-----
-kubernetes> ./cluster/kubectl.sh get -o template po javaee7-hol-kt6bw --template={{.status.podIP}}
-----
-
-+
-. As mentioned earlier, Pod's IP address is accessible only inside the cluster. Login to the minion to access application's main page hosted by the containers:
+. Get all pods:
 +
 [source, text]
 ----
-kubernetes> vagrant ssh minion-1
-Last login: Tue Jul 14 21:35:12 2015 from 10.0.2.2
-[vagrant@kubernetes-minion-1 ~]$ curl http://10.246.1.104:8080/movieplex7/
-<?xml version='1.0' encoding='UTF-8'?>
-<!DOCTYPE html>
- ...
-</html>
+kubectl.sh get pods
+NAME                READY     STATUS    RESTARTS   AGE
+javaee7-hol-e4ezg   1/1       Running   0          24s
 ----
 +
-. Check logs of the Pod using the pod's name:
+. Get logs:
 +
 [source, text]
 ----
-kubernetes> ./cluster/kubectl.sh logs javaee7-hol-kt6bw
-W0715 10:07:53.235698   14344 cmd.go:149] log is DEPRECATED and will be removed in a future version. Use logs instead.
+kubectl.sh logs javaee7-hol-e4ezg
 =========================================================================
 
   JBoss Bootstrap Environment
 
   JBOSS_HOME: /opt/jboss/wildfly
 
-  JAVA: /usr/lib/jvm/java/bin/java
+. . .
+
+23:00:05,516 INFO  [org.jboss.as.ejb3.deployment.processors.EjbJndiBindingsDeploymentUnitProcessor] (MSC service thread 1-2) JNDI bindings for session bean named ShowTimingFacadeREST in deployment unit deployment "movieplex7-1.0-SNAPSHOT.war" are as follows:
+
+  java:global/movieplex7-1.0-SNAPSHOT/ShowTimingFacadeREST!org.javaee7.movieplex7.rest.ShowTimingFacadeREST
+  java:app/movieplex7-1.0-SNAPSHOT/ShowTimingFacadeREST!org.javaee7.movieplex7.rest.ShowTimingFacadeREST
+  java:module/ShowTimingFacadeREST!org.javaee7.movieplex7.rest.ShowTimingFacadeREST
+  java:global/movieplex7-1.0-SNAPSHOT/ShowTimingFacadeREST
+  java:app/movieplex7-1.0-SNAPSHOT/ShowTimingFacadeREST
+  java:module/ShowTimingFacadeREST
 
 . . .
 
-17:03:12,322 INFO  [org.wildfly.extension.undertow] (ServerService Thread Pool -- 64) WFLYUT0021: Registered web context: /movieplex7
-17:03:12,369 INFO  [org.jboss.as.server] (ServerService Thread Pool -- 37) WFLYSRV0010: Deployed "movieplex7-1.0-SNAPSHOT.war" (runtime-name : "movieplex7-1.0-SNAPSHOT.war")
-17:03:12,515 INFO  [org.jboss.as] (Controller Boot Thread) WFLYSRV0060: Http management interface listening on http://127.0.0.1:9990/management
-17:03:12,516 INFO  [org.jboss.as] (Controller Boot Thread) WFLYSRV0051: Admin console listening on http://127.0.0.1:9990
-17:03:12,516 INFO  [org.jboss.as] (Controller Boot Thread) WFLYSRV0025: WildFly Full 9.0.0.Final (WildFly Core 1.0.0.Final) started in 11951ms - Started 437 of 607 services (233 services are lazy, passive or on-demand)
+23:00:12,128 INFO  [org.jboss.as.server] (ServerService Thread Pool -- 37) WFLYSRV0010: Deployed "movieplex7-1.0-SNAPSHOT.war" (runtime-name : "movieplex7-1.0-SNAPSHOT.war")
+23:00:12,362 INFO  [org.jboss.as] (Controller Boot Thread) WFLYSRV0060: Http management interface listening on http://127.0.0.1:9990/management
+23:00:12,363 INFO  [org.jboss.as] (Controller Boot Thread) WFLYSRV0051: Admin console listening on http://127.0.0.1:9990
+23:00:12,363 INFO  [org.jboss.as] (Controller Boot Thread) WFLYSRV0025: WildFly Full 9.0.0.Final (WildFly Core 1.0.0.Final) started in 14272ms - Started 437 of 607 services (233 services are lazy, passive or on-demand)
 ----
-
-=== Access the Application on Host
-
-. `javaee7-hol.yaml` configuration file also exposes the `hostPort` on 8080. This allows port 8080 exposed by container to be forwarded at the port 8080 of the host.
 +
-NOTE: It is not recommended to publish `hostPort` as other Pods may try to use that port as well, and this will cause contention.
-+
-Get IP address of the host as:
+. Expose RC as a Service:
 +
 [source, text]
 ----
-kubernetes> ./cluster/kubectl.sh get -o=wide po
-NAME                READY     STATUS    RESTARTS   AGE       NODE
-javaee7-hol-kt6bw   1/1       Running   0          8m        10.245.1.3
+kubectl.sh expose rc javaee7-hol --name=javaee7-webapp --port=8080 --target-port=8080
 ----
 +
-. Access the application on host as:
+. Start proxy:
 +
 [source, text]
 ----
-kubernetes> curl http://10.245.1.3:8080/movieplex7/
-<?xml version='1.0' encoding='UTF-8'?>
-<!DOCTYPE html>
-<!-- 
-/*
-
-. . .
-
-            <div id="content" class="left_content">
-                Showing 20 movies in 7 theaters!
-            
-            </div>
-        </div></body>
-
-</html>
+kubectl.sh proxy
 ----
-
-=== Delete the Replication Controller
-
-. Delete the Replication Controller:
-
++
+. Access the application at: http://127.0.0.1:8001/api/v1/proxy/namespaces/default/services/javaee7-webapp/movieplex7/
++
+. Application can also be accessed using the external LB. Get ingress LB address:
++
 [source, text]
 ----
-kubernetes> ./cluster/kubectl.sh delete -f ~/workspaces/kubernetes-java-sample/javaee7-hol.yaml
-replicationcontrollers/javaee7-hol
+kubectl.sh describe service javaee7-webapp
+Name:     javaee7-webapp
+Namespace:    default
+Labels:     name=javaee7-hol
+Selector:   name=javaee7-hol
+Type:     LoadBalancer
+IP:     10.0.127.236
+LoadBalancer Ingress: acfadbbb785d011e6afad02cb89b07e4-1679328360.us-west-2.elb.amazonaws.com
+Port:     <unset> 8080/TCP
+NodePort:   <unset> 30757/TCP
+Endpoints:    10.244.0.9:8080
+Session Affinity: None
+Events:
+  FirstSeen LastSeen  Count From      SubobjectPath Type    Reason      Message
+  --------- --------  ----- ----      ------------- --------  ------      -------
+  4m    4m    1 {service-controller }     Normal    CreatingLoadBalancer  Creating load balancer
+  4m    4m    1 {service-controller }     Normal    CreatedLoadBalancer Created load balancer
+----
++
+. Get the value of `LoadBalancer Ingress` and access the app at http://<IP>:8080/movieplex7.
++
+. Delete resources:
++
+[source, text]
+----
+kubectl.sh delete rc/javaee7-hol svc/javaee7-webapp
+replicationcontroller "javaee7-hol" deleted
+service "javaee7-webapp" deleted
 ----
 
 == Kubernetes Service
@@ -442,194 +440,70 @@ Pods are ephemeral. IP address assigned to a Pod cannot be relied upon. Kubernet
 
 https://github.com/kubernetes/kubernetes/blob/master/docs/user-guide/services.md[Kubernetes Service] is an abstraction which defines a set of logical Pods. The set of Pods targeted by a Service are determined by labels associated with the Pods.
 
-This section will show how to run a WildFly and MySQL containers in separate Pods. WildFly Pod will talk to the MySQL Pod using a Service.
-
-.Kubernetes Service
-image::images/kubernetes-service.png[]
+This section will show how to run a Couchbase service and using a Spring Boot application to write a JSON document to Couchbase.
 
 The order of Service and the targeted Pods does not matter. However Service needs to be started before any other Pods consuming the Service are started.
 
-. Start MySQL Pod:
+NOTE: All code for this sample is in the `maven` directory.
+
+. Start Couchase RC and Service:
 +
 [source, text]
 ----
-kubernetes> ./cluster/kubectl.sh create -f ~/workspaces/kubernetes-java-sample/app-mysql-pod.yaml 
-pods/mysql-pod
+kubectl.sh create -f couchbase-service.yml
+service "couchbase-service" created
+replicationcontroller "couchbase-rc" created
 ----
 +
 . Get status of the Pod:
 +
 [source, text]
 ----
-kubernetes> ./cluster/kubectl.sh get -w po
-NAME        READY     STATUS    RESTARTS   AGE
-mysql-pod   0/1       Pending   0          4s
-mysql-pod   0/1       Running   0          44s
-mysql-pod   1/1       Running   0          44s
+kubectl.sh get -w pods
+NAME                 READY     STATUS              RESTARTS   AGE
+couchbase-rc-yl4am   0/1       ContainerCreating   0          13s
+NAME                 READY     STATUS    RESTARTS   AGE
+couchbase-rc-yl4am   1/1       Running   0          22s
 ----
 +
-. Start MySQL Service:
+If multiple pods are running, then the list of pods can be narrowed by specifying labels:
 +
 [source, text]
 ----
-kubernetes> ./cluster/kubectl.sh create -f ~/workspaces/kubernetes-java-sample/app-mysql-service.yaml
-services/mysql-service
+kubectl.sh get pod -l app=couchbase-rc-pod
+NAME                 READY     STATUS    RESTARTS   AGE
+couchbase-rc-yl4am   1/1       Running   0          2m
 ----
 +
 . Get status of the Service:
 +
 [source, text]
 ----
-kubernetes> ./cluster/kubectl.sh get -w se
-NAME            LABELS                                    SELECTOR                                IP(S)          PORT(S)
-kubernetes      component#apiserver,provider=kubernetes   <none>                                  10.247.0.1     443/TCP
-mysql-service   context=docker-k8s-lab,name=mysql-pod     context=docker-k8s-lab,name=mysql-pod   10.247.63.43   3306/TCP
+kubectl.sh get service
+NAME                CLUSTER-IP    EXTERNAL-IP   PORT(S)                                AGE
+couchbase-service   10.0.38.222   <none>        8091/TCP,8092/TCP,8093/TCP,11210/TCP   1m
+kubernetes          10.0.0.1      <none>        443/TCP                                53m
 ----
 +
-If multiple services are running, pods status can be narrowed by specifying labels:
+. Run Java application:
 +
 [source, text]
 ----
-kubernetes> ./cluster/kubectl.sh  get -w po -l context=docker-k8s-lab,name=mysql-pod
-NAME        READY     STATUS    RESTARTS   AGE
-mysql-pod   1/1       Running   0          4m
+kubectl.sh create -f bootiful-couchbase.yml 
+pod "bootiful-couchbase" created
 ----
 +
-This is also the selector label used by Service to target Pods.
-+
-When a Service is run on a node, the kubelet adds a set of environment variables for each active Service. It supports both Docker links compatible variables and simpler `{SVCNAME}_SERVICE_HOST` and `{SVCNAME}_SERVICE_PORT` variables, where the Service name is upper-cased and dashes are converted to underscores.
-+
-Our service name is "`mysql-service`" and so `MYSQL_SERVICE_SERVICE_HOST` and `MYSQL_SERVICE_SERVICE_PORT` variables are available to other pods.
-+
-. Start WildFly Replication Controller:
+. Check the status of Pod:
 +
 [source, text]
 ----
-kubernetes> ./cluster/kubectl.sh create -f ~/workspaces/kubernetes-java-sample/app-wildfly-rc.yaml
-replicationcontrollers/wildfly-rc
+kubectl.sh get -w pods bootiful-couchbase
+NAME                 READY     STATUS              RESTARTS   AGE
+bootiful-couchbase   0/1       ContainerCreating   0          10s
+bootiful-couchbase   1/1       Running   0         38s
 ----
 +
-. Check the status of Pod inside Replication Controller:
-+
-[source, text]
-----
-kubernetes> ./cluster/kubectl.sh get po
-NAME               READY     STATUS    RESTARTS   AGE
-mysql-pod          1/1       Running   0          1h
-wildfly-rc-w2kk5   1/1       Running   0          6m
-----
-+
-. Get IP address of the Pod:
-+
-[source, text]
-----
-kubernetes> ./cluster/kubectl.sh get -o template po wildfly-rc-w2kk5 --template={{.status.podIP}}
-10.246.1.23
-----
-+
-. Log in to minion and access the application:
-+
-[source, text]
-----
-kubernetes> vagrant ssh minion-1
-Last login: Thu Jul 16 00:24:36 2015 from 10.0.2.2
-[vagrant@kubernetes-minion-1 ~]$ curl http://10.246.1.23:8080/employees/resources/employees/
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?><collection><employee><id>1</id><name>Penny</name></employee><employee><id>2</id><name>Sheldon</name></employee><employee><id>3</id><name>Amy</name></employee><employee><id>4</id><name>Leonard</name></employee><employee><id>5</id><name>Bernadette</name></employee><employee><id>6</id><name>Raj</name></employee><employee><id>7</id><name>Howard</name></employee><employee><id>8</id><name>Priya</name></employee></collection>
-----
-
-== Kubernetes Application
-
-Kubernetes allow multiple resources to be specified in a single configuration file. This allows to create a "`Kubernetes Application`" that can consists of multiple resources easily.
-
-Previous section showed how to deploy the Java EE application using multiple configuration files. This application can be delpoyed using a single configuration file as well.
-
-. Start the application using the configuration file:
-+
-[source, yaml]
-....
-apiVersion: v1
-kind: Pod
-metadata:
-  name: mysql-pod
-  labels:
-    name: mysql-pod
-    context: docker-k8s-lab
-spec:
-  containers:
-    -
-      name: mysql
-      image: mysql:latest
-      env:
-        -
-          name: "MYSQL_USER"
-          value: "mysql"
-        -
-          name: "MYSQL_PASSWORD"
-          value: "mysql"
-        -
-          name: "MYSQL_DATABASE"
-          value: "sample"
-        -
-          name: "MYSQL_ROOT_PASSWORD"
-          value: "supersecret"
-      ports:
-        -
-          containerPort: 3306
-----
-apiVersion: v1
-kind: Service
-metadata:
-  name: mysql-service
-  labels:
-    name: mysql-pod
-    context: docker-k8s-lab
-spec:
-  ports:
-    # the port that this service should serve on
-    - port: 3306
-  # label keys and values that must match in order to receive traffic for this service
-  selector:
-    name: mysql-pod
-    context: docker-k8s-lab
-----
-apiVersion: v1
-kind: ReplicationController
-metadata:
-  name: wildfly-rc
-  labels:
-    name: wildfly
-    context: docker-k8s-lab
-spec:
-  replicas: 1
-  template:
-    metadata:
-      labels:
-        name: wildfly
-    spec:
-      containers:
-      - name: wildfly-rc-pod
-        image: arungupta/wildfly-mysql-javaee7:k8s
-        ports:
-        - containerPort: 8080
-....
-+
-Notice that each section, one each for MySQL Pod, MySQL Service, and WildFly Replication Controller, is separated by `----`.
-+
-. Start the application:
-+
-[source, text]
-----
-./cluster/kubectl.sh create -f ~/workspaces/kubernetes-java-sample/app.yaml
-pods/mysql-pod
-services/mysql-service
-replicationcontrollers/wildfly-rc
-----
-+
-. Application can accessed by logging into minion as explained in the previous section.
-
-== Router front-ending the Service
-
-TODO
+. TODO
 
 == Kubernetes Volumes
 
@@ -638,6 +512,7 @@ http://kubernetes.io/v1.0/docs/user-guide/volumes.html
 == Kubernetes Application Health Checks
 
 http://kubernetes.io/v1.0/docs/user-guide/walkthrough/k8s201.html#health-checking
+http://kubernetes.io/docs/user-guide/liveness/
 
 Kubernetes cluster checks if the container process is still running, and if not, the container process is restarted. This basic level of health checking is already enabled for all containers running in the Kubernetes cluster. This health check is performed by Kubelet.
 
