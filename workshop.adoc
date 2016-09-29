@@ -503,11 +503,42 @@ bootiful-couchbase   0/1       ContainerCreating   0          10s
 bootiful-couchbase   1/1       Running   0         38s
 ----
 +
-. TODO
+. Get logs from pod:
++
+[source, text]
+----
+kubectl.sh logs -f bootiful-couchbase
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::        (v1.4.0.RELEASE)
+
+2016-09-29 00:46:02.298  INFO 5 --- [           main] org.example.webapp.Application           : Starting Application v1.0-SNAPSHOT on bootiful-couchbase with PID 5 (/maven/bootiful-couchbase.jar started by root in /)
+2016-09-29 00:46:02.320  INFO 5 --- [           main] org.example.webapp.Application           : No active profile set, falling back to default profiles: default
+2016-09-29 00:46:02.520  INFO 5 --- [           main] s.c.a.AnnotationConfigApplicationContext : Refreshing org.springframework.context.annotation.AnnotationConfigApplicationContext@4ccabbaa: startup date [Thu Sep 29 00:46:02 UTC 2016]; root of context hierarchy
+2016-09-29 00:46:04.857  INFO 5 --- [           main] c.c.client.core.env.CoreEnvironment      : ioPoolSize is less than 3 (1), setting to: 3
+2016-09-29 00:46:04.860  INFO 5 --- [           main] c.c.client.core.env.CoreEnvironment      : computationPoolSize is less than 3 (1), setting to: 3
+2016-09-29 00:46:05.300  INFO 5 --- [           main] com.couchbase.client.core.CouchbaseCore  : CouchbaseEnvironment: {sslEnabled=false, sslKeystoreFile='null', sslKeystorePassword='null', queryEnabled=false, queryPort=8093, bootstrapHttpEnabled=true, bootstrapCarrierEnabled=true, bootstrapHttpDirectPort=8091, bootstrapHttpSslPort=18091, bootstrapCarrierDirectPort=11210, bootstrapCarrierSslPort=11207, ioPoolSize=3, computationPoolSize=3, responseBufferSize=16384, requestBufferSize=16384, kvServiceEndpoints=1, viewServiceEndpoints=1, queryServiceEndpoints=1, searchServiceEndpoints=1, ioPool=NioEventLoopGroup, coreScheduler=CoreScheduler, eventBus=DefaultEventBus, packageNameAndVersion=couchbase-java-client/2.2.8 (git: 2.2.8, core: 1.2.9), dcpEnabled=false, retryStrategy=BestEffort, maxRequestLifetime=75000, retryDelay=ExponentialDelay{growBy 1.0 MICROSECONDS, powers of 2; lower=100, upper=100000}, reconnectDelay=ExponentialDelay{growBy 1.0 MILLISECONDS, powers of 2; lower=32, upper=4096}, observeIntervalDelay=ExponentialDelay{growBy 1.0 MICROSECONDS, powers of 2; lower=10, upper=100000}, keepAliveInterval=30000, autoreleaseAfter=2000, bufferPoolingEnabled=true, tcpNodelayEnabled=true, mutationTokensEnabled=false, socketConnectTimeout=1000, dcpConnectionBufferSize=20971520, dcpConnectionBufferAckThreshold=0.2, dcpConnectionName=dcp/core-io, callbacksOnIoPool=false, queryTimeout=7500, viewTimeout=7500, kvTimeout=2500, connectTimeout=5000, disconnectTimeout=25000, dnsSrvEnabled=false}
+2016-09-29 00:46:06.000  INFO 5 --- [      cb-io-1-1] com.couchbase.client.core.node.Node      : Connected to Node couchbase-service
+2016-09-29 00:46:06.136  INFO 5 --- [      cb-io-1-1] com.couchbase.client.core.node.Node      : Disconnected from Node couchbase-service
+2016-09-29 00:46:06.779  INFO 5 --- [      cb-io-1-2] com.couchbase.client.core.node.Node      : Connected to Node couchbase-service
+2016-09-29 00:46:07.083  INFO 5 --- [-computations-3] c.c.c.core.config.ConfigurationProvider  : Opened bucket books
+2016-09-29 00:46:08.482  INFO 5 --- [           main] o.s.j.e.a.AnnotationMBeanExporter        : Registering beans for JMX exposure on startup
+Book{isbn=978-1-4919-1889-0, name=Minecraft Modding with Forge, cost=29.99}
+2016-09-29 00:46:09.053  INFO 5 --- [           main] org.example.webapp.Application           : Started Application in 7.994 seconds (JVM running for 9.689)
+2016-09-29 00:46:09.063  INFO 5 --- [       Thread-5] s.c.a.AnnotationConfigApplicationContext : Closing org.springframework.context.annotation.AnnotationConfigApplicationContext@4ccabbaa: startup date [Thu Sep 29 00:46:02 UTC 2016]; root of context hierarchy
+2016-09-29 00:46:09.067  INFO 5 --- [       Thread-5] o.s.j.e.a.AnnotationMBeanExporter        : Unregistering JMX-exposed beans on shutdown
+2016-09-29 00:46:09.088  INFO 5 --- [      cb-io-1-2] com.couchbase.client.core.node.Node      : Disconnected from Node couchbase-service
+2016-09-29 00:46:09.090  INFO 5 --- [       Thread-5] c.c.c.core.config.ConfigurationProvider  : Closed bucket books
+----
 
 == Kubernetes Volumes
 
-http://kubernetes.io/v1.0/docs/user-guide/volumes.html
+http://kubernetes.io/docs/user-guide/volumes/
 
 == Kubernetes Application Health Checks
 
