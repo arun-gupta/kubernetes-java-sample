@@ -51,7 +51,8 @@
 . Create Service: `kubectl.sh create -f wildfly-service.yaml`
 . Get RC, Service and Pods: `kubectl.sh get rc,service,pods`
 . Describe service: `kubectl.sh describe service wildfly-service`
-. Get the value of `LoadBalancer Ingress`, access the WildFly landing page at `<IP>:8080`
+. If Kubernetes is on cloud with LB
+.. Get the value of `LoadBalancer Ingress`, access the WildFly landing page at `<IP>:8080`
 . Delete multiple resources: `kubectl.sh delete rc/wildfly-rc service/wildfly-service`
 
 == Using Maven (Service + Replication Controller + Client Pod)
@@ -63,7 +64,9 @@ All the code is in `maven` directory:
 . Run application: `kubectl.sh create -f bootiful-couchbase.yml`
 . Check status: `kubectl.sh get -w pods`
 .. Show `ContainerCreating`
-. Check logs: `kubectl.sh logs -f bootiful-couchbase` to show the output `Book{isbn=978-1-4919-1889-0, name=Minecraft Modding with Forge, cost=29.99}`
+. Show all pods: `kubectl get pods --show-all`
+. Check logs: `kubectl.sh logs -f <pod-name>` to show the output `Book{isbn=978-1-4919-1889-0, name=Minecraft Modding with Forge, cost=29.99}`
+. Delete all resources: `kubectl.sh delete -f couchbase-service.yml -f bootiful-couchbase.yml`
 
 == Rolling Updates
 
