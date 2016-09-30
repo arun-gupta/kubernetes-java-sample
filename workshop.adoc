@@ -28,7 +28,12 @@ image::images/kubernetes-architecture.png[]
 === Have a Amazon Web Services account?
 
 . Download Kubernetes from https://github.com/kubernetes/kubernetes/releases/download/v1.4.0/kubernetes.tar.gz and extract.
-. Include `kubernetes/cluster` in the `PATH`.
+. Include `kubernetes/cluster` in the `PATH`:
++
+```
+export PATH=`pwd`/kubernetes/cluster:$PATH
+```
++
 . Start Kubernetes cluster:
 +
   NUM_NODES=2 NODE_SIZE=m3.medium KUBERNETES_PROVIDER=aws kube-up.sh
