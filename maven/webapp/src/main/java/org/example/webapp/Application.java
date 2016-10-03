@@ -10,7 +10,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  */
 @SpringBootApplication
 public class Application implements CommandLineRunner {
-    
+
     @Autowired
     private BookRepository repository;
 
@@ -21,9 +21,8 @@ public class Application implements CommandLineRunner {
     @Override
     public void run(String... args) {
         String isbn = "978-1-4919-1889-0";
-        
         repository.save(new Book(isbn, "Minecraft Modding with Forge", "29.99"));
-        
+
         Book book = repository.findByIsbn(isbn);
         System.out.println(book);
     }

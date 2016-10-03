@@ -1,5 +1,7 @@
 spec:
   replicas: 1
+  selector:
+    app: couchbase-rc-pod
   template:
     metadata:
       labels:
