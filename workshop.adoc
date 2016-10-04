@@ -23,9 +23,20 @@ Key concepts of Kubernetes are explained below:
 .Kubernetes Architecture
 image::images/kubernetes-architecture.png[]
 
-== Initial setup
+== Software Setup
 
-=== Have a Amazon Web Services account?
+=== Using Minikube
+
+. Download https://github.com/kubernetes/minikube/releases[latest minikube release]
+. Download http://kubernetes.io/docs/getting-started-guides/minikube/#install-kubectl[latest kubectl]
+. Move both binaries in the same directory and include that directory in the `PATH`.
+. Start Kubernetes one node cluster:
++
+  minikube start
++
+Detailed instructions: http://kubernetes.io/docs/getting-started-guides/minikube/
+
+=== Using Amazon Web Services
 
 . Download Kubernetes from https://github.com/kubernetes/kubernetes/releases/download/v1.4.0/kubernetes.tar.gz and extract.
 . Include `kubernetes/cluster` in the `PATH`:
@@ -39,17 +50,6 @@ export PATH=`pwd`/kubernetes/cluster:$PATH
   NUM_NODES=2 NODE_SIZE=m3.medium KUBERNETES_PROVIDER=aws kube-up.sh
 +
 Detailed instructions: http://kubernetes.io/docs/getting-started-guides/aws/
-
-=== Do not have a Amazon Web Services account
-
-. Download https://github.com/kubernetes/minikube/releases[latest minikube release]
-. Download http://kubernetes.io/docs/getting-started-guides/minikube/#install-kubectl[latest kubectl]
-. Move both binaries in the same directory and include that directory in the `PATH`.
-. Start Kubernetes one node cluster:
-+
-  minikube start
-+
-Detailed instructions: http://kubernetes.io/docs/getting-started-guides/minikube/
 
 == A Pod with One Container
 
