@@ -1,10 +1,8 @@
 = Kubernetes for Java Developers
 
-== Getting Started
+== Create Kubernetes Cluster
 
-. Create Kubernetes cluster: `NUM_NODES=2 NODE_SIZE=m3.medium KUBERNETES_PROVIDER=aws kube-up.sh`
-. Show cluster information: `kubectl.sh cluster-info`
-. Show nodes: `kubectl.sh get nodes`
+https://github.com/arun-gupta/kubernetes-java-sample/blob/master/workshop.adoc#software-setup
 
 == Create Resources
 
@@ -12,61 +10,61 @@
 
 ==== Using CLI
 
-. Create pod: `kubectl.sh run wildfly --image=jboss/wildfly --port=8080`
+. Create pod: `kubectl run wildfly --image=jboss/wildfly --port=8080`
 .. Creates a Deployment or Job
-. Check status: `kubectl.sh get -w pods`
+. Check status: `kubectl get -w pods`
 .. Show the pod name derived from the Deployment name
-. Describe pod: `kubectl.sh describe pod <pod-name>` or `kubectl.sh describe pod/<pod-name>`
-. Get logs: `kubectl.sh logs <pod-name>`
+. Describe pod: `kubectl describe pod <pod-name>` or `kubectl describe pod/<pod-name>`
+. Get logs: `kubectl logs <pod-name>`
 .. Use `-f` to tail logs
-. Get deployments: `kubectl.sh get deployments`
-. Delete deployments: `kubectl.sh delete deployments/wildfly`
-. Get deployments: `kubectl.sh get deployments`
-. Get pods: `kubectl.sh get pods`
+. Get deployments: `kubectl get deployments`
+. Delete deployments: `kubectl delete deployments/wildfly`
+. Get deployments: `kubectl get deployments`
+. Get pods: `kubectl get pods`
 
 ==== Using Configuration File
 
-. Create pod: `kubectl.sh create -f wildfly-pod.yaml`
-. Get pods: `kubectl.sh get pods`
-.. Wide: `kubectl.sh get pods -o wide`
-.. YAML: `kubectl.sh get pods -o yaml`
-.. JSON: `kubectl.sh get pods -o json`
-. Describe pod: `kubectl.sh describe pod/wildfly-pod`
-. Delete pod: `kubectl.sh delete pod/wildfly-pod`
-. Get pods: `kubectl.sh get pods`
+. Create pod: `kubectl create -f wildfly-pod.yaml`
+. Get pods: `kubectl get pods`
+.. Wide: `kubectl get pods -o wide`
+.. YAML: `kubectl get pods -o yaml`
+.. JSON: `kubectl get pods -o json`
+. Describe pod: `kubectl describe pod/wildfly-pod`
+. Delete pod: `kubectl delete pod/wildfly-pod`
+. Get pods: `kubectl get pods`
 
 === Replication Controller
 
-. Create RC: `kubectl.sh create -f wildfly-rc.yaml`
-. Get RC: `kubectl.sh get rc`
-. Get pods: `kubectl.sh get pods`
+. Create RC: `kubectl create -f wildfly-rc.yaml`
+. Get RC: `kubectl get rc`
+. Get pods: `kubectl get pods`
 .. Show pod names
 .. Show image id downloaded on the second host
-. Get pods created by RC: `kubectl.sh describe pods wildfly-rc`
-. Get pods with a specified label: `kubectl.sh get pods -l name=wildfly`
-. Delete RC: `kubectl.sh delete rc wildfly-rc`
+. Get pods created by RC: `kubectl describe pods wildfly-rc`
+. Get pods with a specified label: `kubectl get pods -l name=wildfly`
+. Delete RC: `kubectl delete rc wildfly-rc`
 
 === Service
 
-. Create Service: `kubectl.sh create -f wildfly-service.yaml`
-. Get RC, Service and Pods: `kubectl.sh get rc,service,pods`
-. Describe service: `kubectl.sh describe service wildfly-service`
+. Create Service: `kubectl create -f wildfly-service.yaml`
+. Get RC, Service and Pods: `kubectl get rc,service,pods`
+. Describe service: `kubectl describe service wildfly-service`
 . If Kubernetes is on cloud with LB
 .. Get the value of `LoadBalancer Ingress`, access the WildFly landing page at `<IP>:8080`
-. Delete multiple resources: `kubectl.sh delete rc/wildfly-rc service/wildfly-service`
+. Delete multiple resources: `kubectl delete rc/wildfly-rc service/wildfly-service`
 
 == Using Maven (Service + Replication Controller + Client Pod)
 
 All the code is in `maven` directory:
 
-. Create Couchbase service: `kubectl.sh create -f couchbase-service.yml`
-. Check status: `kubectl.sh get -w pods`
-. Run application: `kubectl.sh create -f bootiful-couchbase.yml`
-. Check status: `kubectl.sh get -w pods`
+. Create Couchbase service: `kubectl create -f couchbase-service.yml`
+. Check status: `kubectl get -w pods`
+. Run application: `kubectl create -f bootiful-couchbase.yml`
+. Check status: `kubectl get -w pods`
 .. Show `ContainerCreating`
 . Show all pods: `kubectl get pods --show-all`
-. Check logs: `kubectl.sh logs -f <pod-name>` to show the output `Book{isbn=978-1-4919-1889-0, name=Minecraft Modding with Forge, cost=29.99}`
-. Delete all resources: `kubectl.sh delete -f couchbase-service.yml -f bootiful-couchbase.yml`
+. Check logs: `kubectl logs -f <pod-name>` to show the output `Book{isbn=978-1-4919-1889-0, name=Minecraft Modding with Forge, cost=29.99}`
+. Delete all resources: `kubectl delete -f couchbase-service.yml -f bootiful-couchbase.yml`
 
 == Rolling Updates
 
@@ -76,34 +74,39 @@ https://github.com/arun-gupta/kubernetes-java-sample/tree/master/rolling-update
 
 == Namespaces
 
-. Create a new namespace: `kubectl.sh create -f dev-namespace.yaml`
-. Get namespaces: `kubectl.sh get namespace`
-. Create a new deployment in the namespace: `kubectl.sh --namespace=development run couchbase --image=arungupta/couchbase`
-. List deployments: `kubectl.sh get deployments`
+. Create a new namespace: `kubectl create -f dev-namespace.yaml`
+. Get namespaces: `kubectl get namespace`
+. Create a new deployment in the namespace: `kubectl --namespace=development run couchbase --image=arungupta/couchbase`
+. List deployments: `kubectl get deployments`
 .. No deployments shown
-. List all resources in the namespace: `kubectl.sh get deployments --namespace=development`
-. List all resources in all namespaces: `kubectl.sh get deployments --all-namespaces`
-. Show pods in the namespaces: `kubectl.sh get pods --all-namespaces`
+. List all resources in the namespace: `kubectl get deployments --namespace=development`
+. List all resources in all namespaces: `kubectl get deployments --all-namespaces`
+. Show pods in the namespaces: `kubectl get pods --all-namespaces`
 
 == Quota (broken)
 
-. Create a constrained resource: `kubectl.sh create -f quota-wildfly.yaml`
-. Check for pods: `kubectl.sh get -w pods`
+. Create a constrained resource: `kubectl create -f quota-wildfly.yaml`
+. Check for pods: `kubectl get -w pods`
 . Broken: https://github.com/kubernetes/kubernetes/issues/33621
 
 == Run-once/Batch Jobs
 
-. Create a job: `kubectl.sh create -f runonce-job.yaml`
-. Check jobs: `kubectl.sh get jobs`
-. More details about job: `kubectl.sh describe jobs wait`
-. Check pods: `kubectl.sh get pods`
-. Show all completed pods: `kubectl.sh get pods --show-all`
+. Create a job: `kubectl create -f runonce-job.yaml`
+. Check jobs: `kubectl get jobs`
+. More details about job: `kubectl describe jobs wait`
+. Check pods: `kubectl get pods`
+. Show all completed pods: `kubectl get pods --show-all`
 
 == Couchbase Cluster
 
 https://github.com/arun-gupta/couchbase-kubernetes/tree/master/cluster
 
+== Daemon Set (work in progress)
+
+. Create a daemon set: `kubectl create -f prometheus-dameonset.yml`
+. 
+
 === Tips
 
-. Create resources in all `.json`, `.yaml` and `.yml` files in dir: `kubectl.sh create -f ./dir`
+. Create resources in all `.json`, `.yaml` and `.yml` files in dir: `kubectl create -f ./dir`
 
