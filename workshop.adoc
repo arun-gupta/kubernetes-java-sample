@@ -23,7 +23,7 @@ Key concepts of Kubernetes are explained below:
 .Kubernetes Architecture
 image::images/kubernetes-architecture.png[]
 
-== Software Setup
+== Create Kubernetes Cluster
 
 === Using Minikube
 
