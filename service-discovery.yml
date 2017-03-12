@@ -1,0 +1,59 @@
+apiVersion: v1
+kind: Service
+metadata: 
+  name: couchbase-service
+spec: 
+  selector: 
+    app: couchbase-rs-pod
+  ports:
+    - name: admin
+      port: 8091
+    - name: views
+      port: 8092
+    - name: query
+      port: 8093
+    - name: memcached
+      port: 11210
+---
+apiVersion: extensions/v1beta1
+kind: ReplicaSet
+metadata:
+  name: couchbase-rs
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: couchbase-rs-pod
+    spec:
+      containers:
+      - name: couchbase
+        image: arungupta/couchbase:travel
+        ports:
+        - containerPort: 8091
+        - containerPort: 8092
+        - containerPort: 8093
+        - containerPort: 11210
+---
+apiVersion: extensions/v1beta1
+kind: ReplicaSet
+metadata:
+  name: wildfly-rs
+  labels:
+    name: wildfly
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: wildfly
+    spec:
+      containers:
+      - name: wildfly-rs-pod
+        image: arungupta/wildfly-couchbase-javaee:travel
+        env:
+        - name: COUCHBASE_URI
+          value: couchbase-service
+        ports:
+        - containerPort: 8080
+
