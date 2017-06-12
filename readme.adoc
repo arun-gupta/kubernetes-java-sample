@@ -2,7 +2,7 @@
 
 == Create Kubernetes Cluster
 
-https://github.com/arun-gupta/kubernetes-java-sample/blob/master/workshop.adoc#software-setup
+https://github.com/arun-gupta/kubernetes-java-sample/blob/master/workshop.adoc#create-kubernetes-cluster
 
 == Create Resources
 
@@ -11,7 +11,6 @@ https://github.com/arun-gupta/kubernetes-java-sample/blob/master/workshop.adoc#s
 ==== Using CLI
 
 . Create pod: `kubectl run wildfly --image=jboss/wildfly --port=8080`
-.. Creates a Deployment or Job
 . Check status: `kubectl get -w pods`
 .. Show the pod name derived from the Deployment name
 . Describe pod: `kubectl describe pod <pod-name>` or `kubectl describe pod/<pod-name>`
@@ -52,6 +51,66 @@ https://github.com/arun-gupta/kubernetes-java-sample/blob/master/workshop.adoc#s
 . If Kubernetes is on cloud with LB
 .. Get the value of `LoadBalancer Ingress`, access the WildFly landing page at `<IP>:8080`
 . Delete multiple resources: `kubectl delete rc/wildfly-rc service/wildfly-service`
+
+=== Load Balancing
+
+. *ClusterIP*: This is default, exposes service on cluster-internal IP.
+.. Create service: `kubectl create -f lb-clusterip.yml`
+.. Get service: `kubectl get svc`
++
+```
+NAME              CLUSTER-IP    EXTERNAL-IP   PORT(S)    AGE
+kubernetes        100.64.0.1    <none>        443/TCP    48m
+wildfly-service   100.71.85.1   <none>        8080/TCP   13m
+```
++
+.. Describe service: `kubectl describe svc wildfly-service`
++
+```
+kubectl describe svc wildfly-service
+Name:			wildfly-service
+Namespace:		default
+Labels:			<none>
+Annotations:		<none>
+Selector:		app=wildfly-rc-pod
+Type:			ClusterIP
+IP:			100.71.85.1
+Port:			web	8080/TCP
+Endpoints:		100.96.1.4:8080,100.96.2.3:8080
+Session Affinity:	None
+Events:			<none>
+```
++
+.. Delete service: `kubectl delete -f lb-clusterip.yml`
++
+. *NodePort*: Expose service on each node of the cluster at a static port. Service is accessible using `<NodeIP>:<NodePort>`.
+.. Create service: `kubectl create -f lb-nodeport.yml`
+.. Get service: `kubectl get svc`
++
+```
+NAME              CLUSTER-IP      EXTERNAL-IP   PORT(S)          AGE
+kubernetes        100.64.0.1      <none>        443/TCP          1h
+wildfly-service   100.67.218.58   <nodes>       8080:30001/TCP   16s
+```
++
+.. Describe service: `kubectl describe svc wildfly-service`
++
+```
+Name:			wildfly-service
+Namespace:		default
+Labels:			<none>
+Annotations:		<none>
+Selector:		app=wildfly-rc-pod
+Type:			NodePort
+IP:			100.67.218.58
+Port:			web	8080/TCP
+NodePort:		web	30001/TCP
+Endpoints:		100.96.1.7:8080,100.96.2.6:8080
+Session Affinity:	None
+Events:			<none>
+```
+. *LoadBalancer*: Expose the service using a cloud provider's load balancer.
+. *ExternalName*: Maps the service to the contents of the external name., buy returning a `CNAME` record with its value.
 
 == Using Maven (Service + Replication Controller + Client Pod)
 
