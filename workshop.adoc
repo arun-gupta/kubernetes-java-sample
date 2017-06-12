@@ -27,6 +27,8 @@ image::images/kubernetes-architecture.png[]
 
 === Using Minikube
 
+This will create a one node development cluster.
+
 . Download https://github.com/kubernetes/minikube/releases[latest minikube release]
 . Download http://kubernetes.io/docs/getting-started-guides/minikube/#install-kubectl[latest kubectl]
 . Move both binaries in the same directory and include that directory in the `PATH`.
@@ -36,20 +38,90 @@ image::images/kubernetes-architecture.png[]
 +
 Detailed instructions: http://kubernetes.io/docs/getting-started-guides/minikube/
 
-=== Using Amazon Web Services
+=== Using Kops on Amazon Web Services
 
-. Download Kubernetes from https://github.com/kubernetes/kubernetes/releases/download/v1.4.0/kubernetes.tar.gz and extract.
-. Include `kubernetes/cluster` in the `PATH`:
+This will create a one master and two worker nodes cluster on AWS.
+
+. Create a directory: `mkdir kops; cd kops`
+. Download kubectl `curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/darwin/amd64/kubectl`
+. http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html[Configure AWS CLI]
+. Create IAM group: `aws iam create-group --group-name kops`
+. Attach policy:
 +
 ```
-export PATH=`pwd`/kubernetes/cluster:$PATH
+aws iam attach-group-policy --policy-arn arn:aws:iam::aws:policy/AmazonEC2FullAccess --group-name kops
+aws iam attach-group-policy --policy-arn arn:aws:iam::aws:policy/AmazonRoute53FullAccess --group-name kops
+aws iam attach-group-policy --policy-arn arn:aws:iam::aws:policy/AmazonS3FullAccess --group-name kops
+aws iam attach-group-policy --policy-arn arn:aws:iam::aws:policy/IAMFullAccess --group-name kops
+aws iam attach-group-policy --policy-arn arn:aws:iam::aws:policy/AmazonVPCFullAccess --group-name kops
 ```
 +
-. Start Kubernetes cluster:
+. Create IAM user: `aws iam create-user --user-name kops`
+. Add user to group: `aws iam add-user-to-group --user-name kops --group-name kops`
+. Create keys for the user: `aws iam create-access-key --user-name kops`. Note down `SecretAccessKey` and `AccessKeyId`
+. Configure AWS CLI: `aws configure`. Use `SecretAccessKey` and `AccessKeyId`
+. Export keys:
 +
-  NUM_NODES=2 NODE_SIZE=m3.medium KUBERNETES_PROVIDER=aws kube-up.sh
+```
+export AWS_ACCESS_KEY_ID=<KEY>
+export AWS_SECRET_ACCESS_KEY=<KEY>
+```
 +
-Detailed instructions: http://kubernetes.io/docs/getting-started-guides/aws/
+. Create DNS records for a sub-domain registered at a non-AWS DNS provider:
++
+```
+ID=$(uuidgen) && \
+aws route53 create-hosted-zone \
+--name kubernetes.arungupta.me \
+--caller-reference $ID \
+| jq .DelegationSet.NameServers
+```
++
+. Configure DNS as explained at https://github.com/kubernetes/kops/blob/master/docs/aws.md#configure-dns.
+. Create S3 bucket: `aws s3api create-bucket --bucket kubernetes-arungupta-me --region us-west-2`
+. Enable bucket versioning: `aws s3api put-bucket-versioning --bucket kubernetes-arungupta-me --region us-west-2 --versioning-configuration Status=Enabled`
+. `export NAME=kubernetes-cluster`
+. `export KOPS_STATE_STORE=s3://kubernetes-arungupta-me`
+. Start Kubernetes cluster on AWS
++
+```
+kops create cluster \
+--zones us-west-2a \
+${NAME} \
+--yes
+```
++
+. Validate cluster using `kops validate cluster`:
++
+```
+Using cluster from kubectl context: kubernetes.arungupta.me
+
+Validating cluster kubernetes.arungupta.me
+
+INSTANCE GROUPS
+NAME      ROLE  MACHINETYPE MIN MAX SUBNETS
+master-us-west-2a Master  m3.medium 1 1 us-west-2a
+nodes     Node  t2.medium 2 2 us-west-2a
+
+NODE STATUS
+NAME            ROLE  READY
+ip-172-20-35-26.us-west-2.compute.internal  node  True
+ip-172-20-46-217.us-west-2.compute.internal node  True
+ip-172-20-60-199.us-west-2.compute.internal master  True
+
+Your cluster kubernetes.arungupta.me is ready
+```
++
+. Get nodes in the cluster using `kubectl`:
++
+```
+NAME                                          STATUS         AGE       VERSION
+ip-172-20-35-26.us-west-2.compute.internal    Ready,node     38m       v1.6.2
+ip-172-20-46-217.us-west-2.compute.internal   Ready,node     38m       v1.6.2
+ip-172-20-60-199.us-west-2.compute.internal   Ready,master   39m       v1.6.2
+```
+
+Detailed instructions: https://github.com/kubernetes/kops/blob/master/docs/aws.md
 
 == A Pod with One Container
 
