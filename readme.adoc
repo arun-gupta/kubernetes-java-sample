@@ -81,18 +81,19 @@ Session Affinity:	None
 Events:			<none>
 ```
 +
+.. Service is accessible only inside the cluster.
 .. Delete service: `kubectl delete -f lb-clusterip.yml`
-+
-. *NodePort*: Expose service on each node of the cluster at a static port. Service is accessible using `<NodeIP>:<NodePort>`.
+. *NodePort*: Expose service on each node of the cluster at a static port.
 .. Create service: `kubectl create -f lb-nodeport.yml`
 .. Get service: `kubectl get svc`
 +
 ```
 NAME              CLUSTER-IP      EXTERNAL-IP   PORT(S)          AGE
-kubernetes        100.64.0.1      <none>        443/TCP          1h
-wildfly-service   100.67.218.58   <nodes>       8080:30001/TCP   16s
+kubernetes        100.64.0.1      <none>        443/TCP          2h
+wildfly-service   100.68.222.70   <nodes>       8080:32233/TCP   29m
 ```
 +
+Service is accessible using `<NodeIP>:<NodePort>`. `<NodePort>` for us is `32233`.
 .. Describe service: `kubectl describe svc wildfly-service`
 +
 ```
@@ -102,14 +103,52 @@ Labels:			<none>
 Annotations:		<none>
 Selector:		app=wildfly-rc-pod
 Type:			NodePort
-IP:			100.67.218.58
+IP:			100.68.222.70
 Port:			web	8080/TCP
-NodePort:		web	30001/TCP
-Endpoints:		100.96.1.7:8080,100.96.2.6:8080
+NodePort:		web	32233/TCP
+Endpoints:		100.96.1.13:8080,100.96.2.12:8080
 Session Affinity:	None
 Events:			<none>
 ```
++
+.. Access Service
+... Configure the worker node firewall to create a `Custom TCP Rule` to allow port `32233` accessible from `Anywhere`.
+... Find IP address of the worker nodes using AWS Console.
+... Service is accessible at `<worker-node-ip>:32233`.
+.. Delete the service: `kubectl delete -f lb-nodeport.yml`
 . *LoadBalancer*: Expose the service using a cloud provider's load balancer.
+.. Create service: `kubectl create -f lb-loadbalancer.yml`
+.. Get service: `kubectl get svc`
++
+```
+NAME              CLUSTER-IP       EXTERNAL-IP        PORT(S)          AGE
+kubernetes        100.64.0.1       <none>             443/TCP          2h
+wildfly-service   100.65.225.120   afa8056b14fc9...   8080:30229/TCP   4s
+```
++
+.. Describe service:
++
+```
+Name:			wildfly-service
+Namespace:		default
+Labels:			<none>
+Annotations:		<none>
+Selector:		app=wildfly-rc-pod
+Type:			LoadBalancer
+IP:			100.65.225.120
+LoadBalancer Ingress:	afa8056b14fc911e79b1906d8a9d4b8c-1413998286.us-west-2.elb.amazonaws.com
+Port:			web	8080/TCP
+NodePort:		web	30229/TCP
+Endpoints:		100.96.1.14:8080,100.96.2.13:8080
+Session Affinity:	None
+Events:
+  FirstSeen	LastSeen	Count	From			SubObjectPath	Type		Reason			Message
+  ---------	--------	-----	----			-------------	--------	------			-------
+  11s		11s		1	service-controller			Normal		CreatingLoadBalancer	Creating load balancer
+  8s		8s		1	service-controller			Normal		CreatedLoadBalancer	Created load balancer
+```
+.. Service is accessible at `<LoadBalancer-Ingress>:8080`. Wait for 3 mins for the load balancer to settle before accessing this URL.
+.. Delete service: `kubectl delete -f lb-loadbalancer.yml`
 . *ExternalName*: Maps the service to the contents of the external name., buy returning a `CNAME` record with its value.
 
 == Using Maven (Service + Replication Controller + Client Pod)
