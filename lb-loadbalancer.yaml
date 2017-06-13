@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Service
+metadata: 
+  name: wildfly-service
+spec: 
+  selector: 
+    app: wildfly-rs-pod
+  ports:
+    - name: web
+      port: 8080
+  type: LoadBalancer
+---
+apiVersion: extensions/v1beta1
+kind: ReplicaSet
+metadata:
+  name: wildfly-rs
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: wildfly-rs-pod
+    spec:
+      containers:
+      - name: wildfly
+        image: jboss/wildfly
+        ports:
+        - containerPort: 8080

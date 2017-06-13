@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Service
+metadata: 
+  name: wildfly-service
+spec: 
+  ports:
+    - name: web
+      port: 80
+  type: ExternalName
+  externalName: ec2-34-210-79-105.us-west-2.compute.amazonaws.com
