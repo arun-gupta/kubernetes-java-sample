@@ -4,7 +4,7 @@ metadata:
   name: wildfly-service
 spec: 
   selector: 
-    app: wildfly-rc-pod
+    app: wildfly-rs-pod
   ports:
     - name: web
       port: 8080
