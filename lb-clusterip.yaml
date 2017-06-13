@@ -4,22 +4,22 @@ metadata:
   name: wildfly-service
 spec: 
   selector: 
-    app: wildfly-rc-pod
+    app: wildfly-rs-pod
   ports:
     - name: web
       port: 8080
   type: ClusterIP
 ---
-apiVersion: v1
-kind: ReplicationController
+apiVersion: extensions/v1beta1
+kind: ReplicaSet
 metadata:
-  name: wildfly-rc
+  name: wildfly-rs
 spec:
   replicas: 2
   template:
     metadata:
       labels:
-        app: wildfly-rc-pod
+        app: wildfly-rs-pod
     spec:
       containers:
       - name: wildfly
