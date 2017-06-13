@@ -10,16 +10,16 @@ spec:
       port: 8080
   type: NodePort
 ---
-apiVersion: v1
-kind: ReplicationController
+apiVersion: extensions/v1beta1
+kind: ReplicaSet
 metadata:
-  name: wildfly-rc
+  name: wildfly-rs
 spec:
   replicas: 2
   template:
     metadata:
       labels:
-        app: wildfly-rc-pod
+        app: wildfly-rs-pod
     spec:
       containers:
       - name: wildfly
