@@ -55,8 +55,8 @@ https://github.com/arun-gupta/kubernetes-java-sample/blob/master/workshop.adoc#c
 === Load Balancing
 
 . *ClusterIP*: This is default, exposes service on cluster-internal IP.
-.. Create service: `kubectl create -f lb-clusterip.yml`
-.. Get service: `kubectl get svc`
+.. Create: `kubectl create -f lb-clusterip.yml`
+.. Describe: `kubectl get svc`
 +
 ```
 NAME              CLUSTER-IP    EXTERNAL-IP   PORT(S)    AGE
@@ -64,7 +64,7 @@ kubernetes        100.64.0.1    <none>        443/TCP    48m
 wildfly-service   100.71.85.1   <none>        8080/TCP   13m
 ```
 +
-.. Describe service: `kubectl describe svc wildfly-service`
+Details: `kubectl describe svc wildfly-service`
 +
 ```
 kubectl describe svc wildfly-service
@@ -81,11 +81,19 @@ Session Affinity:	None
 Events:			<none>
 ```
 +
-.. Service is accessible only inside the cluster.
-.. Delete service: `kubectl delete -f lb-clusterip.yml`
+.. Access: Service is accessible only inside the cluster.
+... Expose the service: `kubectl expose service wildfly-service --port=8080 --target-port=8080 --name=web`
+... Start Kubernetes proxy: `kubectl proxy`
+... Access the service: `curl http://localhost:8001/api/v1/proxy/namespaces/default/services/web/index.html`
+.. Delete:
++
+```
+kubectl delete -f lb-clusterip.yml
+kubectl delete svc/web
+```
 . *NodePort*: Expose service on each node of the cluster at a static port.
-.. Create service: `kubectl create -f lb-nodeport.yml`
-.. Get service: `kubectl get svc`
+.. Create: `kubectl create -f lb-nodeport.yml`
+.. Describe: `kubectl get svc`
 +
 ```
 NAME              CLUSTER-IP      EXTERNAL-IP   PORT(S)          AGE
@@ -93,8 +101,7 @@ kubernetes        100.64.0.1      <none>        443/TCP          2h
 wildfly-service   100.68.222.70   <nodes>       8080:32233/TCP   29m
 ```
 +
-Service is accessible using `<NodeIP>:<NodePort>`. `<NodePort>` for us is `32233`.
-.. Describe service: `kubectl describe svc wildfly-service`
+Details: `kubectl describe svc wildfly-service`
 +
 ```
 Name:			wildfly-service
@@ -111,14 +118,14 @@ Session Affinity:	None
 Events:			<none>
 ```
 +
-.. Access Service
+.. Access: Service is accessible using `<NodeIP>:<NodePort>`. `<NodePort>` for us is `32233`.
 ... Configure the worker node firewall to create a `Custom TCP Rule` to allow port `32233` accessible from `Anywhere`.
 ... Find IP address of the worker nodes using AWS Console.
 ... Service is accessible at `<worker-node-ip>:32233`.
-.. Delete the service: `kubectl delete -f lb-nodeport.yml`
+.. Delete: `kubectl delete -f lb-nodeport.yml`
 . *LoadBalancer*: Expose the service using a cloud provider's load balancer.
-.. Create service: `kubectl create -f lb-loadbalancer.yml`
-.. Get service: `kubectl get svc`
+.. Create: `kubectl create -f lb-loadbalancer.yml`
+.. Describe: `kubectl get svc`
 +
 ```
 NAME              CLUSTER-IP       EXTERNAL-IP        PORT(S)          AGE
@@ -126,7 +133,7 @@ kubernetes        100.64.0.1       <none>             443/TCP          2h
 wildfly-service   100.65.225.120   afa8056b14fc9...   8080:30229/TCP   4s
 ```
 +
-.. Describe service:
+Details:
 +
 ```
 Name:			wildfly-service
@@ -147,9 +154,40 @@ Events:
   11s		11s		1	service-controller			Normal		CreatingLoadBalancer	Creating load balancer
   8s		8s		1	service-controller			Normal		CreatedLoadBalancer	Created load balancer
 ```
-.. Service is accessible at `<LoadBalancer-Ingress>:8080`. Wait for 3 mins for the load balancer to settle before accessing this URL.
-.. Delete service: `kubectl delete -f lb-loadbalancer.yml`
-. *ExternalName*: Maps the service to the contents of the external name., buy returning a `CNAME` record with its value.
+.. Access: Service is accessible at `<LoadBalancer-Ingress>:8080`. Wait for 3 mins for the load balancer to settle before accessing this URL. Firewall rules are created during the service creation.
+.. Delete: `kubectl delete -f lb-loadbalancer.yml`
+. *ExternalName*: Returns a `CNAME` record to an external service running outside the cluster. Allows for pods within the cluster to access the service outside the cluster. Redirection happens at DNS level, with no proxying or forwarding.
+.. Create
+... Start a https://aws.amazon.com/marketplace/pp/B00NN8XQWU[WildFly bitnami stack]
+... Get IP address of the provisioned host and replace the value in `lb-external.yaml`
+... `kubectl create -f lb-external.yaml`
+.. Describe: `kubectl get svc`:
++
+```
+NAME              CLUSTER-IP   EXTERNAL-IP                                         PORT(S)   AGE
+kubernetes        100.64.0.1   <none>                                              443/TCP   3h
+wildfly-service                ec2-34-210-79-105.us-west-2.compute.amazonaws.com   8080/TCP  2s
+```
++
+Details: `kubectl describe svc/wildfly-service`
++
+```
+Name:			wildfly-service
+Namespace:		default
+Labels:			<none>
+Annotations:		<none>
+Selector:		<none>
+Type:			ExternalName
+IP:			
+External Name:		ec2-34-210-79-105.us-west-2.compute.amazonaws.com
+Port:			web	8080/TCP
+Endpoints:		<none>
+Session Affinity:	None
+Events:			<none>
+```
++
+.. Access: This service is only accessible inside the cluster. `kubectl expose` only work for services with selectors.
+.. Delete: `kubectl delete -f lb-external.yml`
 
 == Using Maven (Service + Replication Controller + Client Pod)
 
