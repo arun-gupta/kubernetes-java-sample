@@ -1,0 +1,12 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: wildfly-ingress
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /wildfly
+        backend:
+          serviceName: wildfly-service
+          servicePort: 8080
