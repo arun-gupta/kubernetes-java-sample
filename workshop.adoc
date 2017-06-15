@@ -82,6 +82,7 @@ aws route53 create-hosted-zone \
 . Enable bucket versioning: `aws s3api put-bucket-versioning --bucket kubernetes-arungupta-me --region us-west-2 --versioning-configuration Status=Enabled`
 . `export NAME=kubernetes-cluster`
 . `export KOPS_STATE_STORE=s3://kubernetes-arungupta-me`
+. Download kops from https://github.com/kubernetes/kops/releases/latest
 . Start Kubernetes cluster on AWS
 +
 ```
