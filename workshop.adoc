@@ -42,8 +42,8 @@ Detailed instructions: http://kubernetes.io/docs/getting-started-guides/minikube
 
 This will create a one master and two worker nodes cluster on AWS.
 
-. Create a directory: `mkdir kops; cd kops`
-. Download kubectl `curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/darwin/amd64/kubectl`
+. Install Kops: `brew update && brew install kops && brew install kubectl`.
+. Check Kops version `kops version`. Make sure its `1.6.2` at least.
 . http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html[Configure AWS CLI]
 . Create IAM group: `aws iam create-group --group-name kops`
 . Attach policy:
@@ -67,59 +67,82 @@ export AWS_ACCESS_KEY_ID=<KEY>
 export AWS_SECRET_ACCESS_KEY=<KEY>
 ```
 +
-. Create DNS records for a sub-domain registered at a non-AWS DNS provider:
-+
-```
-ID=$(uuidgen) && \
-aws route53 create-hosted-zone \
---name kubernetes.arungupta.me \
---caller-reference $ID \
-| jq .DelegationSet.NameServers
-```
-+
-. Configure DNS as explained at https://github.com/kubernetes/kops/blob/master/docs/aws.md#configure-dns.
 . Create S3 bucket: `aws s3api create-bucket --bucket kubernetes-arungupta-me --region us-west-2`
 . Enable bucket versioning: `aws s3api put-bucket-versioning --bucket kubernetes-arungupta-me --region us-west-2 --versioning-configuration Status=Enabled`
-. `export NAME=kubernetes-cluster`
+. `export NAME=cluster.k8s.local`
 . `export KOPS_STATE_STORE=s3://kubernetes-arungupta-me`
-. Download kops from https://github.com/kubernetes/kops/releases/latest
 . Start Kubernetes cluster on AWS
 +
 ```
 kops create cluster \
---zones us-west-2a \
 ${NAME} \
+--zones us-east-1a \
 --yes
 ```
 +
-. Validate cluster using `kops validate cluster`:
+It shows the output as:
 +
 ```
-Using cluster from kubectl context: kubernetes.arungupta.me
+I0703 12:10:25.700774   36281 create_cluster.go:655] Inferred --cloud=aws from zone "us-east-1a"
+I0703 12:10:25.701240   36281 create_cluster.go:841] Using SSH public key: /Users/argu/.ssh/id_rsa.pub
+I0703 12:10:26.175659   36281 subnets.go:183] Assigned CIDR 172.20.32.0/19 to subnet us-east-1a
+I0703 12:10:28.930005   36281 apply_cluster.go:396] Gossip DNS: skipping DNS validation
+I0703 12:10:29.709277   36281 executor.go:91] Tasks: 0 done / 67 total; 32 can run
+I0703 12:10:30.619598   36281 vfs_castore.go:422] Issuing new certificate: "kops"
+I0703 12:10:30.637415   36281 vfs_castore.go:422] Issuing new certificate: "kube-scheduler"
+I0703 12:10:30.961460   36281 vfs_castore.go:422] Issuing new certificate: "kube-proxy"
+I0703 12:10:31.088121   36281 vfs_castore.go:422] Issuing new certificate: "kube-controller-manager"
+I0703 12:10:31.198301   36281 vfs_castore.go:422] Issuing new certificate: "kubecfg"
+I0703 12:10:31.371058   36281 vfs_castore.go:422] Issuing new certificate: "kubelet"
+I0703 12:10:32.717984   36281 executor.go:91] Tasks: 32 done / 67 total; 13 can run
+I0703 12:10:34.007905   36281 executor.go:91] Tasks: 45 done / 67 total; 18 can run
+I0703 12:10:35.182359   36281 launchconfiguration.go:320] waiting for IAM instance profile "masters.cluster.k8s.local" to be ready
+I0703 12:10:35.226575   36281 launchconfiguration.go:320] waiting for IAM instance profile "nodes.cluster.k8s.local" to be ready
+I0703 12:10:45.933390   36281 executor.go:91] Tasks: 63 done / 67 total; 3 can run
+I0703 12:10:47.189627   36281 vfs_castore.go:422] Issuing new certificate: "master"
+I0703 12:10:47.527929   36281 executor.go:91] Tasks: 66 done / 67 total; 1 can run
+I0703 12:10:47.888263   36281 executor.go:91] Tasks: 67 done / 67 total; 0 can run
+I0703 12:10:48.289931   36281 update_cluster.go:229] Exporting kubecfg for cluster
+Kops has set your kubectl context to cluster.k8s.local
 
-Validating cluster kubernetes.arungupta.me
+Cluster is starting.  It should be ready in a few minutes.
+
+Suggestions:
+ * validate cluster: kops validate cluster
+ * list nodes: kubectl get nodes --show-labels
+ * ssh to the master: ssh -i ~/.ssh/id_rsa admin@api.cluster.k8s.local
+The admin user is specific to Debian. If not using Debian please use the appropriate user based on your OS.
+ * read about installing addons: https://github.com/kubernetes/kops/blob/master/docs/addons.md
+```
++
+. Wait for a few minutes and then validate the cluster: `kops validate cluster`:
++
+```
+Using cluster from kubectl context: cluster.k8s.local
+
+Validating cluster cluster.k8s.local
 
 INSTANCE GROUPS
 NAME      ROLE  MACHINETYPE MIN MAX SUBNETS
-master-us-west-2a Master  m3.medium 1 1 us-west-2a
-nodes     Node  t2.medium 2 2 us-west-2a
+master-us-east-1a Master  m3.medium 1 1 us-east-1a
+nodes     Node  t2.medium 2 2 us-east-1a
 
 NODE STATUS
-NAME            ROLE  READY
-ip-172-20-35-26.us-west-2.compute.internal  node  True
-ip-172-20-46-217.us-west-2.compute.internal node  True
-ip-172-20-60-199.us-west-2.compute.internal master  True
+NAME        ROLE  READY
+ip-172-20-49-102.ec2.internal node  True
+ip-172-20-58-69.ec2.internal  node  True
+ip-172-20-61-237.ec2.internal master  True
 
-Your cluster kubernetes.arungupta.me is ready
+Your cluster cluster.k8s.local is ready
 ```
 +
-. Get nodes in the cluster using `kubectl`:
+. Get nodes in the cluster using `kubectl get nodes`:
 +
 ```
-NAME                                          STATUS         AGE       VERSION
-ip-172-20-35-26.us-west-2.compute.internal    Ready,node     38m       v1.6.2
-ip-172-20-46-217.us-west-2.compute.internal   Ready,node     38m       v1.6.2
-ip-172-20-60-199.us-west-2.compute.internal   Ready,master   39m       v1.6.2
+NAME                            STATUS         AGE       VERSION
+ip-172-20-49-102.ec2.internal   Ready,node     1m        v1.6.2
+ip-172-20-58-69.ec2.internal    Ready,node     1m        v1.6.2
+ip-172-20-61-237.ec2.internal   Ready,master   2m        v1.6.2
 ```
 
 Detailed instructions: https://github.com/kubernetes/kops/blob/master/docs/aws.md
