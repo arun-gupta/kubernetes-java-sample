@@ -682,19 +682,7 @@ Currently there are three types of application health checks.
 
 === Kubernetes TCP Socket Health Check
 
-== Fabric 8
-
-=== Console
-
-Allows to package and deploy application using a Console
-
-=== Visualization of resources
-
-=== Maven plugin to generate JSON for your WAR file
-
-https://github.com/arun-gupta/kubernetes-java-sample/tree/master/maven
-
-=== Deploy application to Kubernetes
+== Deploy using Maven Plugin
 
 https://github.com/arun-gupta/kubernetes-java-sample/tree/master/maven
 
