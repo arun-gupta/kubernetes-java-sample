@@ -473,16 +473,16 @@ kubectl logs javaee7-hol-tp574
 20:30:43,011 INFO  [org.jboss.as] (Controller Boot Thread) WFLYSRV0051: Admin console listening on http://127.0.0.1:9990
 20:30:43,011 INFO  [org.jboss.as] (Controller Boot Thread) WFLYSRV0025: WildFly Full 9.0.0.Final (WildFly Core 1.0.0.Final) started in 7898ms - Started 437 of 607 services (233 services are lazy, passive or on-demand)
 ```
-
-=== Cluster using minikube
-
-. Expose RC as a Service:
++
+. Access service
+.. Cluster using minikube
+... Expose RC as a Service:
 +
 ```
 kubectl expose rc javaee7-hol --name=javaee7-webapp --port=8080 --target-port=8080
 ```
 +
-. Get service configuration:
+... Get service configuration:
 +
 ```
 kubectl describe service javaee7-webapp
@@ -499,18 +499,16 @@ Session Affinity: None
 Events:     <none>
 ```
 +
-. Start proxy: `kubectl proxy`
-. Access the application at: http://127.0.0.1:8001/api/v1/proxy/namespaces/default/services/javaee7-webapp/movieplex7/
-
-=== Cluster on AWS
-
-. For a Kubernetes cluster created on AWS, expose RC as a Service:
+... Start proxy: `kubectl proxy`
+... Access the application at: http://127.0.0.1:8001/api/v1/proxy/namespaces/default/services/javaee7-webapp/movieplex7/
+.. Cluster on AWS
+... For a Kubernetes cluster created on AWS, expose RC as a Service:
 +
 ```
 kubectl expose rc javaee7-hol --name=javaee7-webapp --port=8080 --target-port=8080 --type=LoadBalancer
 ```
 +
-. Get service configuration:
+... Get service configuration:
 +
 ```
 kubectl describe service javaee7-webapp
@@ -534,8 +532,7 @@ Events:
 +
 Application can also be accessed using the external LB. Get ingress LB address:
 +
-. Get the value of `LoadBalancer Ingress` and access the app at http://<IP>:8080/movieplex7.
-
+... Get the value of `LoadBalancer Ingress` and access the app at http://<IP>:8080/movieplex7.
 . Delete resources:
 +
 ```
