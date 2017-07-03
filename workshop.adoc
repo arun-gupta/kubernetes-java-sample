@@ -1,4 +1,4 @@
-= Kubernetes Java Samples
+= Kubernetes Java Workshop
 :toc:
 :toclevels: 3
 :toc-placement!:
