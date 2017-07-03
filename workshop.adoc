@@ -646,7 +646,7 @@ Book{isbn=978-1-4919-1889-0, name=Minecraft Modding with Forge, cost=29.99}
 2017-07-03 21:32:44.814  INFO 1 --- [      Thread-16] o.s.j.e.a.AnnotationMBeanExporter        : Unregistering JMX-exposed beans on shutdown
 2017-07-03 21:32:44.824  INFO 1 --- [      Thread-16] c.c.c.core.config.ConfigurationProvider  : Closed bucket books
 2017-07-03 21:32:44.824  INFO 1 --- [      cb-io-1-2] com.couchbase.client.core.node.Node      : Disconnected from Node couchbase-service
-----
+```
 +
 . Delete all the resources:
 +
