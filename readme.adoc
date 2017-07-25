@@ -55,7 +55,7 @@ https://github.com/arun-gupta/kubernetes-java-sample/blob/master/workshop.adoc#c
 === Load Balancing
 
 . *ClusterIP*: This is default, exposes service on cluster-internal IP.
-.. Create: `kubectl create -f lb-clusterip.yml`
+.. Create: `kubectl create -f lb-clusterip.yaml`
 .. Describe: `kubectl get svc`
 +
 ```
