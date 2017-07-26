@@ -55,7 +55,7 @@ https://github.com/arun-gupta/kubernetes-java-sample/blob/master/workshop.adoc#c
 === Load Balancing
 
 . *ClusterIP*: This is default, exposes service on cluster-internal IP.
-.. Create: `kubectl create -f lb-clusterip.yml`
+.. Create: `kubectl create -f lb-clusterip.yaml`
 .. Describe: `kubectl get svc`
 +
 ```
@@ -88,11 +88,11 @@ Events:			<none>
 .. Delete:
 +
 ```
-kubectl delete -f lb-clusterip.yml
+kubectl delete -f lb-clusterip.yaml
 kubectl delete svc/web
 ```
 . *NodePort*: Expose service on each node of the cluster at a static port.
-.. Create: `kubectl create -f lb-nodeport.yml`
+.. Create: `kubectl create -f lb-nodeport.yaml`
 .. Describe: `kubectl get svc`
 +
 ```
@@ -122,9 +122,9 @@ Events:			<none>
 ... Configure the worker node firewall to create a `Custom TCP Rule` to allow port `32233` accessible from `Anywhere`.
 ... Find IP address of the worker nodes using AWS Console.
 ... Service is accessible at `<worker-node-ip>:32233`.
-.. Delete: `kubectl delete -f lb-nodeport.yml`
+.. Delete: `kubectl delete -f lb-nodeport.yaml`
 . *LoadBalancer*: Expose the service using a cloud provider's load balancer.
-.. Create: `kubectl create -f lb-loadbalancer.yml`
+.. Create: `kubectl create -f lb-loadbalancer.yaml`
 .. Describe: `kubectl get svc`
 +
 ```
@@ -155,7 +155,7 @@ Events:
   8s		8s		1	service-controller			Normal		CreatedLoadBalancer	Created load balancer
 ```
 .. Access: Service is accessible at `<LoadBalancer-Ingress>:8080`. Wait for 3 mins for the load balancer to settle before accessing this URL. Firewall rules are created during the service creation.
-.. Delete: `kubectl delete -f lb-loadbalancer.yml`
+.. Delete: `kubectl delete -f lb-loadbalancer.yaml`
 . *ExternalName*: Returns a `CNAME` record to an external service running outside the cluster. Allows for pods within the cluster to access the service outside the cluster. Redirection happens at DNS level, with no proxying or forwarding.
 .. Create
 ... Start a https://aws.amazon.com/marketplace/pp/B00NN8XQWU[WildFly bitnami stack]
@@ -187,7 +187,7 @@ Events:			<none>
 ```
 +
 .. Access: This service is only accessible inside the cluster. `kubectl expose` only work for services with selectors.
-.. Delete: `kubectl delete -f lb-external.yml`
+.. Delete: `kubectl delete -f lb-external.yaml`
 
 == Using Maven (Service + Replication Controller + Client Pod)
 
