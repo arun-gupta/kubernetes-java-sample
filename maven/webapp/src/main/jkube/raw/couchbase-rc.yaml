@@ -1,7 +1,9 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: couchbase-rc
 spec:
   replicas: 1
-  selector:
-    app: couchbase-rc-pod
   template:
     metadata:
       labels:
@@ -10,7 +12,6 @@ spec:
       containers:
       - name: couchbase
         image: arungupta/oreilly-couchbase
-        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8091
         - containerPort: 8092
