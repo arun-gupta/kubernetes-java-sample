@@ -42,7 +42,7 @@
 [INFO] Copying 1 resource
 [INFO] Copying 0 resource
 [INFO] 
-[INFO] --- kubernetes-maven-plugin:1.0.0-rc-1:resource (default) @ bootiful-couchbase ---
+[INFO] --- kubernetes-maven-plugin:1.0.1:resource (default) @ bootiful-couchbase ---
 [INFO] k8s: Running generator spring-boot
 [INFO] k8s: spring-boot: Using Docker image quay.io/jkube/jkube-java-binary-s2i:0.0.7 as base / builder
 [INFO] k8s: jkube-controller: Adding a default Deployment
@@ -70,7 +70,7 @@
 [INFO] --- spring-boot-maven-plugin:1.4.0.RELEASE:repackage (default) @ bootiful-couchbase ---
 [INFO] Layout: ZIP
 [INFO] 
-[INFO] --- kubernetes-maven-plugin:1.0.0-rc-1:build (default) @ bootiful-couchbase ---
+[INFO] --- kubernetes-maven-plugin:1.0.1:build (default) @ bootiful-couchbase ---
 [INFO] k8s: Running in Kubernetes mode
 [INFO] k8s: Building Docker image in Kubernetes mode
 [INFO] k8s: Running generator spring-boot
@@ -101,14 +101,14 @@
 [INFO] Building bootiful-couchbase 1.0-SNAPSHOT
 [INFO] --------------------------------[ jar ]---------------------------------
 [INFO] 
-[INFO] >>> kubernetes-maven-plugin:1.0.0-rc-1:deploy (default-cli) > install @ bootiful-couchbase >>>
+[INFO] >>> kubernetes-maven-plugin:1.0.1:deploy (default-cli) > install @ bootiful-couchbase >>>
 [INFO] 
 [INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ bootiful-couchbase ---
 [INFO] Using 'UTF-8' encoding to copy filtered resources.
 [INFO] Copying 1 resource
 [INFO] Copying 0 resource
 [INFO] 
-[INFO] --- kubernetes-maven-plugin:1.0.0-rc-1:resource (default) @ bootiful-couchbase ---
+[INFO] --- kubernetes-maven-plugin:1.0.1:resource (default) @ bootiful-couchbase ---
 [INFO] k8s: Running generator spring-boot
 [INFO] k8s: spring-boot: Using Docker image quay.io/jkube/jkube-java-binary-s2i:0.0.7 as base / builder
 [INFO] k8s: jkube-controller: Adding a default Deployment
@@ -139,7 +139,7 @@
 [INFO] --- spring-boot-maven-plugin:1.4.0.RELEASE:repackage (default) @ bootiful-couchbase ---
 [INFO] Layout: ZIP
 [INFO] 
-[INFO] --- kubernetes-maven-plugin:1.0.0-rc-1:build (default) @ bootiful-couchbase ---
+[INFO] --- kubernetes-maven-plugin:1.0.1:build (default) @ bootiful-couchbase ---
 [INFO] k8s: Running in Kubernetes mode
 [INFO] k8s: Building Docker image in Kubernetes mode
 [INFO] k8s: Running generator spring-boot
@@ -154,10 +154,10 @@
 [INFO] Installing /home/rohaan/work/repos/kubernetes-java-sample/maven/webapp/pom.xml to /home/rohaan/.m2/repository/org/example/webapps/bootiful-couchbase/1.0-SNAPSHOT/bootiful-couchbase-1.0-SNAPSHOT.pom
 [INFO] Installing /home/rohaan/work/repos/kubernetes-java-sample/maven/webapp/target/classes/META-INF/jkube/kubernetes.yml to /home/rohaan/.m2/repository/org/example/webapps/bootiful-couchbase/1.0-SNAPSHOT/bootiful-couchbase-1.0-SNAPSHOT-kubernetes.yml
 [INFO] 
-[INFO] <<< kubernetes-maven-plugin:1.0.0-rc-1:deploy (default-cli) < install @ bootiful-couchbase <<<
+[INFO] <<< kubernetes-maven-plugin:1.0.1:deploy (default-cli) < install @ bootiful-couchbase <<<
 [INFO] 
 [INFO] 
-[INFO] --- kubernetes-maven-plugin:1.0.0-rc-1:deploy (default-cli) @ bootiful-couchbase ---
+[INFO] --- kubernetes-maven-plugin:1.0.1:deploy (default-cli) @ bootiful-couchbase ---
 [INFO] k8s: Using Kubernetes at https://192.168.39.77:8443/ in namespace default with manifest /home/rohaan/work/repos/kubernetes-java-sample/maven/webapp/target/classes/META-INF/jkube/kubernetes.yml 
 [INFO] k8s: Using namespace: default
 [INFO] k8s: Creating a Service from kubernetes.yml namespace default name bootiful-couchbase
@@ -194,7 +194,7 @@ No need to worry due to the `Pod` being in `CrashLoopBackOff` state. It simply m
 [INFO] Building bootiful-couchbase 1.0-SNAPSHOT
 [INFO] --------------------------------[ jar ]---------------------------------
 [INFO] 
-[INFO] --- kubernetes-maven-plugin:1.0.0-rc-1:log (default-cli) @ bootiful-couchbase ---
+[INFO] --- kubernetes-maven-plugin:1.0.1:log (default-cli) @ bootiful-couchbase ---
 [INFO] k8s: Using Kubernetes at https://192.168.39.77:8443/ in namespace default with manifest /home/rohaan/work/repos/kubernetes-java-sample/maven/webapp/target/classes/META-INF/jkube/kubernetes.yml 
 [INFO] k8s: Using namespace: default
 [INFO] k8s: Watching pods with selector LabelSelector(matchExpressions=[], matchLabels={app=bootiful-couchbase, provider=jkube, group=org.example.webapps}, additionalProperties={}) waiting for a running pod...
