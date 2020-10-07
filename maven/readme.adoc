@@ -23,15 +23,222 @@
 . Create Couchbase service: `kubectl.sh create -f couchbase-service.yml`
 . Run application: `kubectl.sh create -f bootiful-couchbase.yml`
 
-=== Expected flow (with maven plugin)
+=== Using https://github.com/eclipse/jkube[Eclipse JKube]'s Kubernetes Maven Plugin
 
-. Create Kubernetes artifacts for service + RC for `arungupta/oreilly-couchbase` - How can the name of this service be customized to be "`couchbase`"? This is used in `bootiful-couchbase.yml`.
-. Create Kubernetes artifacts for `arungupta/bootiful-couchbase`
-. Deploy all artifacts to Kubernetes: `mvn fabric8:deploy`
+. Compile project: `mvn clean install` (https://github.com/eclipse/jkube[Eclipse JKube]'s executions would build image and generate Kubernetes manifests)
+```
+~/work/repos/kubernetes-java-sample/maven/webapp : $ mvn clean install
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ---------------< org.example.webapps:bootiful-couchbase >---------------
+[INFO] Building bootiful-couchbase 1.0-SNAPSHOT
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.6.1:clean (default-clean) @ bootiful-couchbase ---
+[INFO] Deleting /home/rohaan/work/repos/kubernetes-java-sample/maven/webapp/target
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ bootiful-couchbase ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 1 resource
+[INFO] Copying 0 resource
+[INFO] 
+[INFO] --- kubernetes-maven-plugin:1.0.1:resource (default) @ bootiful-couchbase ---
+[INFO] k8s: Running generator spring-boot
+[INFO] k8s: spring-boot: Using Docker image quay.io/jkube/jkube-java-binary-s2i:0.0.7 as base / builder
+[INFO] k8s: jkube-controller: Adding a default Deployment
+[INFO] k8s: jkube-service: Adding a default service 'bootiful-couchbase' with ports [8080]
+[WARNING] k8s: jkube-image: Environment variable COUCHBASE_URI will not be overridden: trying to set the value couchbase-service, but its actual value is couchbase-service
+[INFO] k8s: jkube-revision-history: Adding revision history limit to 2
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.1:compile (default-compile) @ bootiful-couchbase ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 3 source files to /home/rohaan/work/repos/kubernetes-java-sample/maven/webapp/target/classes
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:testResources (default-testResources) @ bootiful-couchbase ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /home/rohaan/work/repos/kubernetes-java-sample/maven/webapp/src/test/resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.1:testCompile (default-testCompile) @ bootiful-couchbase ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.18.1:test (default-test) @ bootiful-couchbase ---
+[INFO] No tests to run.
+[INFO] 
+[INFO] --- maven-jar-plugin:2.6:jar (default-jar) @ bootiful-couchbase ---
+[INFO] Building jar: /home/rohaan/work/repos/kubernetes-java-sample/maven/webapp/target/bootiful-couchbase.jar
+[INFO] 
+[INFO] --- spring-boot-maven-plugin:1.4.0.RELEASE:repackage (default) @ bootiful-couchbase ---
+[INFO] Layout: ZIP
+[INFO] 
+[INFO] --- kubernetes-maven-plugin:1.0.1:build (default) @ bootiful-couchbase ---
+[INFO] k8s: Running in Kubernetes mode
+[INFO] k8s: Building Docker image in Kubernetes mode
+[INFO] k8s: Running generator spring-boot
+[INFO] k8s: spring-boot: Using Docker image quay.io/jkube/jkube-java-binary-s2i:0.0.7 as base / builder
+[INFO] k8s: [arungupta/bootiful-couchbase:latest] "spring-boot": Created docker-build.tar in 216 milliseconds
+[INFO] k8s: [arungupta/bootiful-couchbase:latest] "spring-boot": Built image sha256:a6557
+[INFO] k8s: [arungupta/bootiful-couchbase:latest] "spring-boot": Removed old image sha256:7fb4e
+[INFO] k8s: [arungupta/bootiful-couchbase:latest] "spring-boot": Tag with latest
+[INFO] 
+[INFO] --- maven-install-plugin:2.5.2:install (default-install) @ bootiful-couchbase ---
+[INFO] Installing /home/rohaan/work/repos/kubernetes-java-sample/maven/webapp/target/bootiful-couchbase.jar to /home/rohaan/.m2/repository/org/example/webapps/bootiful-couchbase/1.0-SNAPSHOT/bootiful-couchbase-1.0-SNAPSHOT.jar
+[INFO] Installing /home/rohaan/work/repos/kubernetes-java-sample/maven/webapp/pom.xml to /home/rohaan/.m2/repository/org/example/webapps/bootiful-couchbase/1.0-SNAPSHOT/bootiful-couchbase-1.0-SNAPSHOT.pom
+[INFO] Installing /home/rohaan/work/repos/kubernetes-java-sample/maven/webapp/target/classes/META-INF/jkube/kubernetes.yml to /home/rohaan/.m2/repository/org/example/webapps/bootiful-couchbase/1.0-SNAPSHOT/bootiful-couchbase-1.0-SNAPSHOT-kubernetes.yml
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  6.339 s
+[INFO] Finished at: 2020-08-10T19:43:55+05:30
+[INFO] ------------------------------------------------------------------------
+~/work/repos/kubernetes-java-sample/maven/webapp : $
+```
+. Deploy all artifacts to Kubernetes: `mvn k8s:deploy`
+```
+~/work/repos/kubernetes-java-sample/maven/webapp : $ mvn k8s:deploy
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ---------------< org.example.webapps:bootiful-couchbase >---------------
+[INFO] Building bootiful-couchbase 1.0-SNAPSHOT
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] >>> kubernetes-maven-plugin:1.0.1:deploy (default-cli) > install @ bootiful-couchbase >>>
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ bootiful-couchbase ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 1 resource
+[INFO] Copying 0 resource
+[INFO] 
+[INFO] --- kubernetes-maven-plugin:1.0.1:resource (default) @ bootiful-couchbase ---
+[INFO] k8s: Running generator spring-boot
+[INFO] k8s: spring-boot: Using Docker image quay.io/jkube/jkube-java-binary-s2i:0.0.7 as base / builder
+[INFO] k8s: jkube-controller: Adding a default Deployment
+[INFO] k8s: jkube-service: Adding a default service 'bootiful-couchbase' with ports [8080]
+[WARNING] k8s: jkube-image: Environment variable COUCHBASE_URI will not be overridden: trying to set the value couchbase-service, but its actual value is couchbase-service
+[INFO] k8s: jkube-revision-history: Adding revision history limit to 2
+[INFO] k8s: validating /home/rohaan/work/repos/kubernetes-java-sample/maven/webapp/target/classes/META-INF/jkube/kubernetes/couchbase-rc-replicationcontroller.yml resource
+[INFO] k8s: validating /home/rohaan/work/repos/kubernetes-java-sample/maven/webapp/target/classes/META-INF/jkube/kubernetes/bootiful-couchbase-deployment.yml resource
+[INFO] k8s: validating /home/rohaan/work/repos/kubernetes-java-sample/maven/webapp/target/classes/META-INF/jkube/kubernetes/couchbase-service-service.yml resource
+[INFO] k8s: validating /home/rohaan/work/repos/kubernetes-java-sample/maven/webapp/target/classes/META-INF/jkube/kubernetes/bootiful-couchbase-service.yml resource
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.1:compile (default-compile) @ bootiful-couchbase ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:testResources (default-testResources) @ bootiful-couchbase ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /home/rohaan/work/repos/kubernetes-java-sample/maven/webapp/src/test/resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.1:testCompile (default-testCompile) @ bootiful-couchbase ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.18.1:test (default-test) @ bootiful-couchbase ---
+[INFO] No tests to run.
+[INFO] 
+[INFO] --- maven-jar-plugin:2.6:jar (default-jar) @ bootiful-couchbase ---
+[INFO] Building jar: /home/rohaan/work/repos/kubernetes-java-sample/maven/webapp/target/bootiful-couchbase.jar
+[INFO] 
+[INFO] --- spring-boot-maven-plugin:1.4.0.RELEASE:repackage (default) @ bootiful-couchbase ---
+[INFO] Layout: ZIP
+[INFO] 
+[INFO] --- kubernetes-maven-plugin:1.0.1:build (default) @ bootiful-couchbase ---
+[INFO] k8s: Running in Kubernetes mode
+[INFO] k8s: Building Docker image in Kubernetes mode
+[INFO] k8s: Running generator spring-boot
+[INFO] k8s: spring-boot: Using Docker image quay.io/jkube/jkube-java-binary-s2i:0.0.7 as base / builder
+[INFO] k8s: [arungupta/bootiful-couchbase:latest] "spring-boot": Created docker-build.tar in 245 milliseconds
+[INFO] k8s: [arungupta/bootiful-couchbase:latest] "spring-boot": Built image sha256:3ab6c
+[INFO] k8s: [arungupta/bootiful-couchbase:latest] "spring-boot": Removed old image sha256:a6557
+[INFO] k8s: [arungupta/bootiful-couchbase:latest] "spring-boot": Tag with latest
+[INFO] 
+[INFO] --- maven-install-plugin:2.5.2:install (default-install) @ bootiful-couchbase ---
+[INFO] Installing /home/rohaan/work/repos/kubernetes-java-sample/maven/webapp/target/bootiful-couchbase.jar to /home/rohaan/.m2/repository/org/example/webapps/bootiful-couchbase/1.0-SNAPSHOT/bootiful-couchbase-1.0-SNAPSHOT.jar
+[INFO] Installing /home/rohaan/work/repos/kubernetes-java-sample/maven/webapp/pom.xml to /home/rohaan/.m2/repository/org/example/webapps/bootiful-couchbase/1.0-SNAPSHOT/bootiful-couchbase-1.0-SNAPSHOT.pom
+[INFO] Installing /home/rohaan/work/repos/kubernetes-java-sample/maven/webapp/target/classes/META-INF/jkube/kubernetes.yml to /home/rohaan/.m2/repository/org/example/webapps/bootiful-couchbase/1.0-SNAPSHOT/bootiful-couchbase-1.0-SNAPSHOT-kubernetes.yml
+[INFO] 
+[INFO] <<< kubernetes-maven-plugin:1.0.1:deploy (default-cli) < install @ bootiful-couchbase <<<
+[INFO] 
+[INFO] 
+[INFO] --- kubernetes-maven-plugin:1.0.1:deploy (default-cli) @ bootiful-couchbase ---
+[INFO] k8s: Using Kubernetes at https://192.168.39.77:8443/ in namespace default with manifest /home/rohaan/work/repos/kubernetes-java-sample/maven/webapp/target/classes/META-INF/jkube/kubernetes.yml 
+[INFO] k8s: Using namespace: default
+[INFO] k8s: Creating a Service from kubernetes.yml namespace default name bootiful-couchbase
+[INFO] k8s: Created Service: target/jkube/applyJson/default/service-bootiful-couchbase.json
+[INFO] k8s: Creating a Service from kubernetes.yml namespace default name couchbase-service
+[INFO] k8s: Created Service: target/jkube/applyJson/default/service-couchbase-service.json
+[INFO] k8s: Creating a Deployment from kubernetes.yml namespace default name bootiful-couchbase
+[INFO] k8s: Created Deployment: target/jkube/applyJson/default/deployment-bootiful-couchbase.json
+[INFO] k8s: Creating a ReplicationController from kubernetes.yml namespace default name couchbase-rc
+[INFO] k8s: Created ReplicationController: target/jkube/applyJson/default/replicationcontroller-couchbase-rc.json
+[INFO] k8s: HINT: Use the command `kubectl get pods -w` to watch your pods start up
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  11.610 s
+[INFO] Finished at: 2020-08-10T19:44:54+05:30
+[INFO] ------------------------------------------------------------------------
+~/work/repos/kubernetes-java-sample/maven/webapp : $
+```
+. Check whether application got deployed with `kubectl get pods`:
+```
+~/work/repos/kubernetes-java-sample/maven/webapp : $ kubectl get pods
+NAME                                  READY   STATUS             RESTARTS   AGE
+bootiful-couchbase-75fd64c949-wgcfd   0/1     CrashLoopBackOff   3          77s
+couchbase-rc-2wgrr                    1/1     Running            0          77s
+```
+No need to worry due to the `Pod` being in `CrashLoopBackOff` state. It simply means that `Pod` is restarting everytime it's completing it's execution. You can check logs using Eclipse JKube goal with `mvn k8s:log`:
+
+```
+~/work/repos/kubernetes-java-sample/maven/webapp : $ mvn k8s:log
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ---------------< org.example.webapps:bootiful-couchbase >---------------
+[INFO] Building bootiful-couchbase 1.0-SNAPSHOT
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- kubernetes-maven-plugin:1.0.1:log (default-cli) @ bootiful-couchbase ---
+[INFO] k8s: Using Kubernetes at https://192.168.39.77:8443/ in namespace default with manifest /home/rohaan/work/repos/kubernetes-java-sample/maven/webapp/target/classes/META-INF/jkube/kubernetes.yml 
+[INFO] k8s: Using namespace: default
+[INFO] k8s: Watching pods with selector LabelSelector(matchExpressions=[], matchLabels={app=bootiful-couchbase, provider=jkube, group=org.example.webapps}, additionalProperties={}) waiting for a running pod...
+[INFO] k8s:  [NEW] bootiful-couchbase-75fd64c949-wgcfd status: Running 
+[INFO] k8s:  [NEW] Tailing log of pod: bootiful-couchbase-75fd64c949-wgcfd
+[INFO] k8s:  [NEW] Press Ctrl-C to stop tailing the log
+[INFO] k8s:  [NEW] 
+[INFO] k8s: exec java -javaagent:/opt/agent-bond/agent-bond.jar=jolokia{{host=0.0.0.0}},jmx_exporter{{9779:/opt/agent-bond/jmx_exporter_config.yml}} -cp . -jar /deployments/bootiful-couchbase.jar
+[INFO] k8s: I> No access restrictor found, access to any MBean is allowed
+[INFO] k8s: Jolokia: Agent started with URL http://172.17.0.3:8778/jolokia/
+[INFO] k8s: 2020-08-10 14:16:47.194:INFO:ifasjipjsoejs.Server:jetty-8.y.z-SNAPSHOT
+[INFO] k8s: 2020-08-10 14:16:47.230:INFO:ifasjipjsoejs.AbstractConnector:Started SelectChannelConnector@0.0.0.0:9779
+[INFO] k8s: 
+[INFO] k8s:   .   ____          _            __ _ _
+[INFO] k8s:  /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+[INFO] k8s: ( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+[INFO] k8s:  \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+[INFO] k8s:   '  |____| .__|_| |_|_| |_\__, | / / / /
+[INFO] k8s:  =========|_|==============|___/=/_/_/_/
+[INFO] k8s:  :: Spring Boot ::        (v1.4.0.RELEASE)
+[INFO] k8s: 
+[INFO] k8s: 2020-08-10 14:16:48.163  INFO 1 --- [           main] org.example.webapp.Application           : Starting Application v1.0-SNAPSHOT on bootiful-couchbase-75fd64c949-wgcfd with PID 1 (/deployments/bootiful-couchbase.jar started by root in /deployments)
+[INFO] k8s: 2020-08-10 14:16:48.173  INFO 1 --- [           main] org.example.webapp.Application           : No active profile set, falling back to default profiles: default
+[INFO] k8s: 2020-08-10 14:16:48.286  INFO 1 --- [           main] s.c.a.AnnotationConfigApplicationContext : Refreshing org.springframework.context.annotation.AnnotationConfigApplicationContext@eafc191: startup date [Mon Aug 10 14:16:48 GMT 2020]; root of context hierarchy
+[INFO] k8s: 2020-08-10 14:16:49.517  INFO 1 --- [           main] c.c.client.core.env.CoreEnvironment      : ioPoolSize is less than 3 (2), setting to: 3
+[INFO] k8s: 2020-08-10 14:16:49.518  INFO 1 --- [           main] c.c.client.core.env.CoreEnvironment      : computationPoolSize is less than 3 (2), setting to: 3
+[INFO] k8s: 2020-08-10 14:16:49.649  INFO 1 --- [           main] com.couchbase.client.core.CouchbaseCore  : CouchbaseEnvironment: {sslEnabled=false, sslKeystoreFile='null', sslKeystorePassword='null', queryEnabled=false, queryPort=8093, bootstrapHttpEnabled=true, bootstrapCarrierEnabled=true, bootstrapHttpDirectPort=8091, bootstrapHttpSslPort=18091, bootstrapCarrierDirectPort=11210, bootstrapCarrierSslPort=11207, ioPoolSize=3, computationPoolSize=3, responseBufferSize=16384, requestBufferSize=16384, kvServiceEndpoints=1, viewServiceEndpoints=1, queryServiceEndpoints=1, searchServiceEndpoints=1, ioPool=NioEventLoopGroup, coreScheduler=CoreScheduler, eventBus=DefaultEventBus, packageNameAndVersion=couchbase-java-client/2.2.8 (git: 2.2.8, core: 1.2.9), dcpEnabled=false, retryStrategy=BestEffort, maxRequestLifetime=75000, retryDelay=ExponentialDelay{growBy 1.0 MICROSECONDS, powers of 2; lower=100, upper=100000}, reconnectDelay=ExponentialDelay{growBy 1.0 MILLISECONDS, powers of 2; lower=32, upper=4096}, observeIntervalDelay=ExponentialDelay{growBy 1.0 MICROSECONDS, powers of 2; lower=10, upper=100000}, keepAliveInterval=30000, autoreleaseAfter=2000, bufferPoolingEnabled=true, tcpNodelayEnabled=true, mutationTokensEnabled=false, socketConnectTimeout=1000, dcpConnectionBufferSize=20971520, dcpConnectionBufferAckThreshold=0.2, dcpConnectionName=dcp/core-io, callbacksOnIoPool=false, queryTimeout=7500, viewTimeout=7500, kvTimeout=2500, connectTimeout=5000, disconnectTimeout=25000, dnsSrvEnabled=false}
+[INFO] k8s: 2020-08-10 14:16:49.900  INFO 1 --- [      cb-io-1-1] com.couchbase.client.core.node.Node      : Connected to Node couchbase-service
+[INFO] k8s: 2020-08-10 14:16:49.960  INFO 1 --- [      cb-io-1-1] com.couchbase.client.core.node.Node      : Disconnected from Node couchbase-service
+[INFO] k8s: 2020-08-10 14:16:50.292  INFO 1 --- [      cb-io-1-2] com.couchbase.client.core.node.Node      : Connected to Node couchbase-service
+[INFO] k8s: 2020-08-10 14:16:50.429  INFO 1 --- [-computations-3] c.c.c.core.config.ConfigurationProvider  : Opened bucket books
+[INFO] k8s: 2020-08-10 14:16:51.041  INFO 1 --- [           main] o.s.j.e.a.AnnotationMBeanExporter        : Registering beans for JMX exposure on startup
+[INFO] k8s: Book{isbn=978-1-4919-1889-0, name=Minecraft Modding with Forge, cost=29.99}
+[INFO] k8s:  [NEW] bootiful-couchbase-75fd64c949-wgcfd status: Running 
+[INFO] k8s: 2020-08-10 14:16:51.389  INFO 1 --- [           main] org.example.webapp.Application           : Started Application in 3.837 seconds (JVM running for 4.502)
+[INFO] k8s: 2020-08-10 14:16:51.390  INFO 1 --- [      Thread-16] s.c.a.AnnotationConfigApplicationContext : Closing org.springframework.context.annotation.AnnotationConfigApplicationContext@eafc191: startup date [Mon Aug 10 14:16:48 GMT 2020]; root of context hierarchy
+[INFO] k8s: 2020-08-10 14:16:51.391  INFO 1 --- [      Thread-16] o.s.j.e.a.AnnotationMBeanExporter        : Unregistering JMX-exposed beans on shutdown
+[INFO] k8s: 2020-08-10 14:16:51.401  INFO 1 --- [      cb-io-1-2] com.couchbase.client.core.node.Node      : Disconnected from Node couchbase-service
+[INFO] k8s: 2020-08-10 14:16:51.402  INFO 1 --- [      Thread-16] c.c.c.core.config.ConfigurationProvider  : Closed bucket books
+```
 
 == Expected Output
 
-. Look for output:
+. Look for output(as shown in log listing above):
 +
 ```
 Book{isbn=978-1-4919-1889-0, name=Minecraft Modding with Forge, cost=29.99}

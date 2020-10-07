@@ -1,5 +1,9 @@
-spec:
-  selector:
+apiVersion: v1
+kind: Service
+metadata: 
+  name: couchbase-service
+spec: 
+  selector: 
     app: couchbase-rc-pod
   ports:
     - name: admin
