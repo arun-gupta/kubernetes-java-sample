@@ -239,7 +239,7 @@ https://github.com/arun-gupta/couchbase-kubernetes/tree/master/cluster
 
 == Daemon Set (work in progress)
 
-. Create a daemon set: `kubectl create -f prometheus-dameonset.yml`
+. Create a daemon set: `kubectl create -f prometheus-daemonset.yml`
 . 
 
 === Tips
